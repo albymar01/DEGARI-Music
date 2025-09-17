@@ -1,0 +1,23 @@
+Title: rnb-pop
+
+Head Concept Name: rnb
+Modifier Concept Name: pop
+
+head, smooth_vocals
+
+modifier, catchy_chorus
+
+T(modifier), synth_hook, 0.85
+T(modifier), danceable_groove, 0.8
+T(modifier), verse_chorus_structure, 0.8
+T(modifier), radio_friendly_length, 0.7
+T(modifier), autotune, 0.65
+T(modifier), clean_vocals, 0.75
+
+T(head), love_theme, 0.85
+T(head), slow_jam, 0.8
+T(head), melismatic_vocals, 0.8
+T(head), auto_tune, 0.65
+T(head), romantic_lyrics, 0.8
+T(head), groove_bassline, 0.7
+

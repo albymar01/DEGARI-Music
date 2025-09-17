@@ -1,0 +1,97 @@
+﻿**********************
+Inizio trascrizione Windows PowerShell
+Ora di inizio: 20250917200427
+Nome utente: ASSEMBLATO3M\Utente
+Esegui come utente: ASSEMBLATO3M\Utente
+Nome configurazione: 
+Computer ASSEMBLATO3M (Microsoft Windows NT 10.0.19045.0)
+Applicazione host: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+ID processo: 18480
+PSVersion: 5.1.19041.6328
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.19041.6328
+BuildVersion: 10.0.19041.6328
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Trascrizione avviata. File di output: C:\Users\Utente\Desktop\DEGARI-Music2.0\Creazione dei prototipi\data\pipeline_20250917_200427.log
+PS C:\Users\Utente> try {
+    # Vai alla radice
+    Set-Location -LiteralPath $ROOT
+
+    # Attiva venv (richiesto, niente setup qui)
+    if (!(Test-Path ".venv\Scripts\Activate.ps1")) {
+        throw "Virtualenv mancante. Esegui prima lo script di setup."
+    }
+    & ".\.venv\Scripts\Activate.ps1"
+
+    Write-Host "`n=== ESECUZIONE PIPELINE (light) ===`n"
+
+    # --- 5.1/5.2 Tools ---
+    Set-Location (Join-Path $ROOT "Tools")
+    python crawler_lyrics.py
+    python lyrics_features.py
+
+    # --- 5.3 Prototyper ---
+    Set-Location (Join-Path $ROOT "Creazione dei prototipi")
+    python prototyper.py
+
+    # --- 5.4 Preprocessing ---
+    Set-Location (Join-Path $ROOT "Sistema di raccomandazione")
+    $genres = @("rap","metal","rock","pop","trap","reggae","rnb","country")
+    foreach ($h in $genres) {
+        foreach ($m in $genres) {
+            if ($h -ne $m) { python cocos_preprocessing.py $h $m }
+        }
+    }
+
+    # --- 5.5 COCOS su tutti i prototipi generati ---
+    $protoDir = Join-Path (Get-Location) "prototipi_music"
+    if (!(Test-Path $protoDir)) { throw "Directory prototipi_music non trovata: $protoDir" }
+    Get-ChildItem $protoDir -Filter *.txt | ForEach-Object {
+        python cocos.py (Join-Path $protoDir $_.Name) 14
+    }
+
+    # --- 5.6 RECOMMENDER solo prototipi 'validi' ---
+    Set-Location (Join-Path $ROOT "Sistema di raccomandazione\Classificatore")
+
+    # Pulisci output di run precedenti così nel TSV ci sono SOLO i tuoi
+    Remove-Item -ErrorAction SilentlyContinue "recommendations.tsv","resume.tsv"
+
+    $protoDir = Join-Path $ROOT "Sistema di raccomandazione\prototipi_music"
+    $valid = Get-ChildItem $protoDir -Filter *.txt |
+             Where-Object { Select-String -Path $_.FullName -Pattern '^\s*result\s*:' -Quiet }
+    $countValid = ($valid | Measure-Object).Count
+    Write-Host "Prototipi validi (con 'result:'): $countValid"
+
+    foreach ($f in $valid) {
+        Write-Host "Recommender su $($f.Name)"
+        python Recommender.py (Join-Path $protoDir $f.Name)
+    }
+
+    # Sposta i file prodotti dal Recommender e crea anche .txt
+    $outDir = Join-Path $PWD "output_recommender\$timestamp"
+    New-Item -ItemType Directory -Path $outDir -Force | Out-Null
+
+    if (Test-Path "recommendations.tsv") {
+        $tsv = Join-Path $outDir "recommendations_$timestamp.tsv"
+        Move-Item "recommendations.tsv" $tsv
+        Copy-Item $tsv ($tsv -replace '\.tsv$', '.txt')
+    }
+    if (Test-Path "resume.tsv") {
+        $tsv2 = Join-Path $outDir "resume_$timestamp.tsv"
+        Move-Item "resume.tsv" $tsv2
+        Copy-Item $tsv2 ($tsv2 -replace '\.tsv$', '.txt')
+    }
+
+    Write-Host "`n=== PIPELINE (light) COMPLETATA ===`n"
+}
+catch {
+    Write-Host "`n!!! ERRORE PIPELINE (light) !!!"
+    Write-Host $_.Exception.Message
+    Write-Host $_.Exception.StackTrace
+}
+
+=== ESECUZIONE PIPELINE (light) ===

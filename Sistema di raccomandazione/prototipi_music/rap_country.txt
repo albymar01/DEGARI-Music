@@ -1,0 +1,31 @@
+Title: rap-country
+
+Head Concept Name: rap
+Modifier Concept Name: country
+
+head, spoken_or_rap_vocals
+
+modifier, acoustic_guitar
+modifier, storytelling
+
+T(modifier), twang_vocals, 0.8
+T(modifier), banjo, 0.7
+T(modifier), fiddle, 0.7
+T(modifier), steel_guitar, 0.7
+T(modifier), folk_influence, 0.7
+T(modifier), verse_chorus, 0.75
+
+T(head), flow, 0.9
+T(head), rhyme, 0.9
+T(head), punchline, 0.85
+T(head), storytelling, 0.8
+T(head), wordplay, 0.8
+T(head), boom_bap_drums, 0.75
+T(head), trap_808, 0.7
+T(head), autotune, 0.65
+T(head), battle_attitude, 0.65
+T(head), scratch, 0.6
+
+
+Result: {"twang_vocals": 0.8, "banjo": 0.7, "fiddle": 0.7, "steel_guitar": 0.7, "folk_influence": 0.7, "verse_chorus": 0.75, "flow": 0.9, "rhyme": 0.9, "punchline": 0.85, "storytelling": 0.8, "wordplay": 0.8, "boom_bap_drums": 0.75, "trap_808": 0.7, "battle_attitude": 0.65, "@scenario_probability": 0.303269003856}
+Scenario: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0.303269003856]

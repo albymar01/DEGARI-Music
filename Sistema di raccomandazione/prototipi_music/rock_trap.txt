@@ -1,0 +1,28 @@
+Title: rock-trap
+
+Head Concept Name: rock
+Modifier Concept Name: trap
+
+head, electric_guitar
+head, acoustic_drums
+
+modifier, 808
+modifier, hi_hat_triplets
+modifier, auto_tune
+
+T(modifier), 808, 0.9
+T(modifier), hi_hat_triplets, 0.85
+T(modifier), auto_tune, 0.85
+T(modifier), minimal_beat, 0.75
+T(modifier), dark_vibe, 0.7
+T(modifier), flute_loop, 0.7
+T(modifier), deadpan_flow, 0.65
+T(modifier), adlibs, 0.65
+
+T(head), distorted_guitars, 0.8
+T(head), riff, 0.85
+T(head), power_chords, 0.8
+T(head), verse_chorus_structure, 0.75
+T(head), guitar_solo, 0.7
+T(head), band_setup, 0.7
+

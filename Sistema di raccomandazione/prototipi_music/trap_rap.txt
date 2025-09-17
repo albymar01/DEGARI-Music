@@ -1,0 +1,31 @@
+Title: trap-rap
+
+Head Concept Name: trap
+Modifier Concept Name: rap
+
+head, 808
+head, hi_hat_triplets
+head, auto_tune
+
+modifier, spoken_or_rap_vocals
+
+T(modifier), flow, 0.9
+T(modifier), rhyme, 0.9
+T(modifier), punchline, 0.85
+T(modifier), storytelling, 0.8
+T(modifier), wordplay, 0.8
+T(modifier), boom_bap_drums, 0.75
+T(modifier), trap_808, 0.7
+T(modifier), autotune, 0.65
+T(modifier), battle_attitude, 0.65
+T(modifier), scratch, 0.6
+
+T(head), 808, 0.9
+T(head), hi_hat_triplets, 0.85
+T(head), auto_tune, 0.85
+T(head), minimal_beat, 0.75
+T(head), dark_vibe, 0.7
+T(head), flute_loop, 0.7
+T(head), deadpan_flow, 0.65
+T(head), adlibs, 0.65
+

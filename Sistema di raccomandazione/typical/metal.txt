@@ -1,0 +1,9 @@
+distorted_guitars: 0.9
+riff: 0.9
+double_bass: 0.85
+guitar_solo: 0.8
+power_chords: 0.75
+fast_tempos: 0.7
+growl_or_scream: 0.7
+palm_muting: 0.65
+moshpit_energy: 0.6

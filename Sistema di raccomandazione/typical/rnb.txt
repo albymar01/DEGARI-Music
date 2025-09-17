@@ -1,0 +1,6 @@
+love_theme: 0.85
+slow_jam: 0.8
+melismatic_vocals: 0.8
+auto_tune: 0.65
+romantic_lyrics: 0.8
+groove_bassline: 0.7

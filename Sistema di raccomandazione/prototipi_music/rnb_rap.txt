@@ -1,0 +1,27 @@
+Title: rnb-rap
+
+Head Concept Name: rnb
+Modifier Concept Name: rap
+
+head, smooth_vocals
+
+modifier, spoken_or_rap_vocals
+
+T(modifier), flow, 0.9
+T(modifier), rhyme, 0.9
+T(modifier), punchline, 0.85
+T(modifier), storytelling, 0.8
+T(modifier), wordplay, 0.8
+T(modifier), boom_bap_drums, 0.75
+T(modifier), trap_808, 0.7
+T(modifier), autotune, 0.65
+T(modifier), battle_attitude, 0.65
+T(modifier), scratch, 0.6
+
+T(head), love_theme, 0.85
+T(head), slow_jam, 0.8
+T(head), melismatic_vocals, 0.8
+T(head), auto_tune, 0.65
+T(head), romantic_lyrics, 0.8
+T(head), groove_bassline, 0.7
+

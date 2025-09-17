@@ -1,0 +1,30 @@
+Title: pop-rap
+
+Head Concept Name: pop
+Modifier Concept Name: rap
+
+head, catchy_chorus
+
+modifier, spoken_or_rap_vocals
+
+T(modifier), flow, 0.9
+T(modifier), rhyme, 0.9
+T(modifier), punchline, 0.85
+T(modifier), storytelling, 0.8
+T(modifier), wordplay, 0.8
+T(modifier), boom_bap_drums, 0.75
+T(modifier), trap_808, 0.7
+T(modifier), autotune, 0.65
+T(modifier), battle_attitude, 0.65
+T(modifier), scratch, 0.6
+
+T(head), synth_hook, 0.85
+T(head), danceable_groove, 0.8
+T(head), verse_chorus_structure, 0.8
+T(head), radio_friendly_length, 0.7
+T(head), autotune, 0.65
+T(head), clean_vocals, 0.75
+
+
+Result: {"flow": 0.9, "rhyme": 0.9, "punchline": 0.85, "storytelling": 0.8, "wordplay": 0.8, "boom_bap_drums": 0.75, "trap_808": 0.7, "autotune": 0.65, "battle_attitude": 0.65, "synth_hook": 0.85, "danceable_groove": 0.8, "verse_chorus_structure": 0.8, "radio_friendly_length": 0.7, "clean_vocals": 0.75, "@scenario_probability": 0.39080145686400003}
+Scenario: [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0.39080145686400003]

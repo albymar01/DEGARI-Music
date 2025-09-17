@@ -1,0 +1,3142 @@
+﻿**********************
+Inizio trascrizione Windows PowerShell
+Ora di inizio: 20250917195640
+Nome utente: ASSEMBLATO3M\Utente
+Esegui come utente: ASSEMBLATO3M\Utente
+Nome configurazione: 
+Computer ASSEMBLATO3M (Microsoft Windows NT 10.0.19045.0)
+Applicazione host: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+ID processo: 5572
+PSVersion: 5.1.19041.6328
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.19041.6328
+BuildVersion: 10.0.19041.6328
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Trascrizione avviata. File di output: C:\Users\Utente\Desktop\DEGARI-Music2.0\Creazione dei prototipi\data\pipeline_20250917_195640.log
+PS C:\Users\Utente> try {
+    # Vai alla radice
+    Set-Location -LiteralPath $ROOT
+
+    # Attiva venv (richiesto, niente setup qui)
+    if (!(Test-Path ".venv\Scripts\Activate.ps1")) {
+        throw "Virtualenv mancante. Esegui prima lo script di setup."
+    }
+    & ".\.venv\Scripts\Activate.ps1"
+
+    Write-Host "`n=== ESECUZIONE PIPELINE (light) ===`n"
+
+    # --- 5.1/5.2 Tools ---
+    Set-Location (Join-Path $ROOT "Tools")
+    python crawler_lyrics.py
+    python lyrics_features.py
+
+    # --- 5.3 Prototyper ---
+    Set-Location (Join-Path $ROOT "Creazione dei prototipi")
+    python prototyper.py
+
+    # --- 5.4 Preprocessing ---
+    Set-Location (Join-Path $ROOT "Sistema di raccomandazione")
+    $genres = @("rap","metal","rock","pop","trap","reggae","rnb","country")
+    foreach ($h in $genres) {
+        foreach ($m in $genres) {
+            if ($h -ne $m) { python cocos_preprocessing.py $h $m }
+        }
+    }
+
+    # --- 5.5 COCOS su tutti i prototipi generati ---
+    $protoDir = Join-Path (Get-Location) "prototipi_music"
+    if (!(Test-Path $protoDir)) { throw "Directory prototipi_music non trovata: $protoDir" }
+    Get-ChildItem $protoDir -Filter *.txt | ForEach-Object {
+        python cocos.py (Join-Path $protoDir $_.Name) 14
+    }
+
+    # --- 5.6 RECOMMENDER solo prototipi 'validi' ---
+    Set-Location (Join-Path $ROOT "Sistema di raccomandazione\Classificatore")
+
+    # Pulisci output di run precedenti così nel TSV ci sono SOLO i tuoi
+    Remove-Item -ErrorAction SilentlyContinue "recommendations.tsv","resume.tsv"
+
+    $protoDir = Join-Path $ROOT "Sistema di raccomandazione\prototipi_music"
+    $valid = Get-ChildItem $protoDir -Filter *.txt |
+             Where-Object { Select-String -Path $_.FullName -Pattern '^\s*result\s*:' -Quiet }
+    $countValid = ($valid | Measure-Object).Count
+    Write-Host "Prototipi validi (con 'result:'): $countValid"
+
+    foreach ($f in $valid) {
+        Write-Host "Recommender su $($f.Name)"
+        python Recommender.py (Join-Path $protoDir $f.Name)
+    }
+
+    # Sposta i file prodotti dal Recommender e crea anche .txt
+    $outDir = Join-Path $PWD "output_recommender\$timestamp"
+    New-Item -ItemType Directory -Path $outDir -Force | Out-Null
+
+    if (Test-Path "recommendations.tsv") {
+        $tsv = Join-Path $outDir "recommendations_$timestamp.tsv"
+        Move-Item "recommendations.tsv" $tsv
+        Copy-Item $tsv ($tsv -replace '\.tsv$', '.txt')
+    }
+    if (Test-Path "resume.tsv") {
+        $tsv2 = Join-Path $outDir "resume_$timestamp.tsv"
+        Move-Item "resume.tsv" $tsv2
+        Copy-Item $tsv2 ($tsv2 -replace '\.tsv$', '.txt')
+    }
+
+    Write-Host "`n=== PIPELINE (light) COMPLETATA ===`n"
+}
+catch {
+    Write-Host "`n!!! ERRORE PIPELINE (light) !!!"
+    Write-Host $_.Exception.Message
+    Write-Host $_.Exception.StackTrace
+}
+
+=== ESECUZIONE PIPELINE (light) ===
+
+== Eminem (rap) ==
+  - dup: rap_eminem_rap-god
+
+== Kendrick Lamar (rap) ==
+  - dup: rap_kendrick-l_not-like-us
+
+== Travis Scott (trap) ==
+  - dup: trap_travis-sco_sicko-mode
+
+== Future (trap) ==
+  - dup: trap_future_mask-off
+
+== Metallica (metal) ==
+  - dup: metal_metallica_one
+
+== Judas Priest (metal) ==
+  - dup: metal_judas-prie_painkiller
+
+== Nirvana (rock) ==
+  - dup: rock_nirvana_smells-like-teen
+
+== AC/DC (rock) ==
+  - dup: rock_ac-dc_t-n-t
+
+== The Weeknd (pop) ==
+  - dup: pop_the-weeknd_the-hills
+
+== Lady Gaga (pop) ==
+  - dup: pop_lady-gaga_shallow
+
+== Bob Marley (reggae) ==
+  - dup: reggae_bob-marley_one-love
+
+== Inner Circle (reggae) ==
+  - dup: reggae_inner-circ_bad-boys
+
+== Beyoncé (rnb) ==
+  - dup: rnb_beyonce_drunk-in-love
+
+== TLC (rnb) ==
+  - dup: rnb_tlc_no-scrubs-with-r
+
+== John Denver (country) ==
+  - dup: country_john-denve_take-me-home-cou
+
+== Dolly Parton (country) ==
+  - dup: country_dolly-part_jolene
+
+Aggiornato: C:\Users\Utente\Desktop\DEGARI-Music2.0\Creazione dei prototipi\descr_music.json -> Totale brani: 46
+Aggiornato descr_music.json con tag di ripetizione.
+C:\Users\Utente\Desktop\DEGARI-Music2.0\.venv\Lib\site-packages\treetaggerwrapper.py:741: FutureWarning: Possible nested
+ set at position 8
+  punct2find_re = re.compile("([^ ])([[" + ALONEMARKS + "])",
+C:\Users\Utente\Desktop\DEGARI-Music2.0\.venv\Lib\site-packages\treetaggerwrapper.py:2045: FutureWarning: Possible neste
+d set at position 152
+  DnsHostMatch_re = re.compile("(" + DnsHost_expression + ")",
+C:\Users\Utente\Desktop\DEGARI-Music2.0\.venv\Lib\site-packages\treetaggerwrapper.py:2069: FutureWarning: Possible neste
+d set at position 409
+  UrlMatch_re = re.compile(UrlMatch_expression, re.VERBOSE | re.IGNORECASE)
+C:\Users\Utente\Desktop\DEGARI-Music2.0\.venv\Lib\site-packages\treetaggerwrapper.py:2081: FutureWarning: Possible neste
+d set at position 192
+  EmailMatch_re = re.compile(EmailMatch_expression, re.VERBOSE | re.IGNORECASE)
+File generated in C:\Users\Utente\Desktop\DEGARI-Music2.0\Creazione dei prototipi\music_for_cocos/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Head Concept: country, Modifier Concept: metal
+
+Recommended scenario(s):
+  - {'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.75, 'fast_tempos'
+: 0.7, 'growl_or_scream': 0.7, 'palm_muting': 0.65, 'moshpit_energy': 0.6, 'twang_vocals': 0.8, 'fiddle': 0.7, 'steel_gu
+itar': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75, '@scenario_probability': 0.48739661333999984}
+  - {'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.75, 'fast_tempos'
+: 0.7, 'growl_or_scream': 0.7, 'palm_muting': 0.65, 'moshpit_energy': 0.6, 'twang_vocals': 0.8, 'banjo': 0.7, 'steel_gui
+tar': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75, '@scenario_probability': 0.48739661333999984}
+  - {'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.75, 'fast_tempos'
+: 0.7, 'growl_or_scream': 0.7, 'palm_muting': 0.65, 'moshpit_energy': 0.6, 'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle':
+0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75, '@scenario_probability': 0.48739661333999984}
+  - {'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.75, 'fast_tempos'
+: 0.7, 'growl_or_scream': 0.7, 'palm_muting': 0.65, 'moshpit_energy': 0.6, 'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle':
+0.7, 'steel_guitar': 0.7, 'verse_chorus': 0.75, '@scenario_probability': 0.48739661333999984}
+
+
+Head Concept: country, Modifier Concept: pop
+
+Recommended scenario(s):
+  - {'synth_hook': 0.85, 'danceable_groove': 0.8, 'verse_chorus_structure': 0.8, 'radio_friendly_length': 0.7, 'autotune
+': 0.65, 'clean_vocals': 0.75, 'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0.7, 'verse_chorus': 0.
+75, '@scenario_probability': 1.14614136}
+
+
+Head Concept: country, Modifier Concept: rap
+
+Recommended scenario(s):
+  - {'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_8
+08': 0.7, 'autotune': 0.65, 'battle_attitude': 0.65, 'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'folk_influence':
+ 0.7, 'verse_chorus': 0.75, '@scenario_probability': 0.24137737041600005}
+  - {'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_8
+08': 0.7, 'autotune': 0.65, 'battle_attitude': 0.65, 'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0
+.7, 'verse_chorus': 0.75, '@scenario_probability': 0.24137737041600005}
+
+
+Head Concept: country, Modifier Concept: reggae
+
+Recommended scenario(s):
+  - {'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'jamaican_patois': 0.7, 'storytelling': 0.7, 'roots_vibe'
+: 0.8, 'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0.7, 'verse_chorus': 0.75, '@scenario_probabili
+ty': 1.01648736}
+
+
+Head Concept: country, Modifier Concept: rnb
+
+Recommended scenario(s):
+  - {'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'auto_tune': 0.65, 'romantic_lyrics': 0.8, 'groove_b
+assline': 0.7, 'twang_vocals': 0.8, 'fiddle': 0.7, 'steel_guitar': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75, '@s
+cenario_probability': 1.2225507840000003}
+  - {'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'auto_tune': 0.65, 'romantic_lyrics': 0.8, 'groove_b
+assline': 0.7, 'twang_vocals': 0.8, 'banjo': 0.7, 'steel_guitar': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75, '@sc
+enario_probability': 1.2225507840000003}
+  - {'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'auto_tune': 0.65, 'romantic_lyrics': 0.8, 'groove_b
+assline': 0.7, 'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75, '@scenario
+_probability': 1.2225507840000003}
+  - {'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'auto_tune': 0.65, 'romantic_lyrics': 0.8, 'groove_b
+assline': 0.7, 'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0.7, 'verse_chorus': 0.75, '@scenario_p
+robability': 1.2225507840000003}
+
+
+Head Concept: country, Modifier Concept: rock
+
+Recommended scenario(s):
+  - {'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structure': 0.75, 'guitar_solo': 0.7, 'b
+and_setup': 0.7, 'twang_vocals': 0.8, 'banjo': 0.7, 'steel_guitar': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75, '@
+scenario_probability': 1.23430608}
+  - {'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structure': 0.75, 'guitar_solo': 0.7, 'b
+and_setup': 0.7, 'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75, '@scenar
+io_probability': 1.23430608}
+  - {'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structure': 0.75, 'guitar_solo': 0.7, 'b
+and_setup': 0.7, 'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0.7, 'verse_chorus': 0.75, '@scenario
+_probability': 1.23430608}
+
+
+Head Concept: country, Modifier Concept: trap
+
+Recommended scenario(s):
+  - {'808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop': 0.7,
+'deadpan_flow': 0.65, 'adlibs': 0.65, 'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0.7, 'verse_chor
+us': 0.75, '@scenario_probability': 0.623348677940625}
+
+
+Head Concept: metal, Modifier Concept: country
+
+Recommended scenario(s):
+  - {'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75,
+ 'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.75, 'fast_tempos': 0.
+7, 'growl_or_scream': 0.7, 'palm_muting': 0.65, '@scenario_probability': 0.7581725096399998}
+
+
+Head Concept: metal, Modifier Concept: pop
+
+Recommended scenario(s):
+  - {'synth_hook': 0.85, 'danceable_groove': 0.8, 'verse_chorus_structure': 0.8, 'radio_friendly_length': 0.7, 'autotune
+': 0.65, 'clean_vocals': 0.75, 'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_ch
+ords': 0.75, 'fast_tempos': 0.7, 'growl_or_scream': 0.7, 'palm_muting': 0.65, '@scenario_probability': 0.977003642160000
+1}
+
+
+Head Concept: metal, Modifier Concept: rap
+
+Recommended scenario(s):
+  - {'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_8
+08': 0.7, 'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.75, 'fast_te
+mpos': 0.7, 'growl_or_scream': 0.7, '@scenario_probability': 0.03212318602382399}
+
+
+Head Concept: metal, Modifier Concept: reggae
+
+Recommended scenario(s):
+  - {'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'jamaican_patois': 0.7, 'storytelling': 0.7, 'roots_vibe'
+: 0.8, 'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.75, 'fast_tempo
+s': 0.7, 'growl_or_scream': 0.7, 'palm_muting': 0.65, '@scenario_probability': 0.86648286816}
+
+
+Head Concept: metal, Modifier Concept: rnb
+
+Recommended scenario(s):
+  - {'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'auto_tune': 0.65, 'romantic_lyrics': 0.8, 'groove_b
+assline': 0.7, 'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.75, 'fa
+st_tempos': 0.7, 'growl_or_scream': 0.7, 'palm_muting': 0.65, '@scenario_probability': 1.0421372183040003}
+
+
+Head Concept: metal, Modifier Concept: rock
+
+Recommended scenario(s):
+  - {'distorted_guitars': 0.9, 'riff': 0.9, 'power_chords': 0.75, 'verse_chorus_structure': 0.75, 'guitar_solo': 0.8, 'b
+and_setup': 0.7, 'double_bass': 0.85, 'fast_tempos': 0.7, 'growl_or_scream': 0.7, 'palm_muting': 0.65, '@scenario_probab
+ility': 1.05215776848}
+
+
+Head Concept: metal, Modifier Concept: trap
+
+Recommended scenario(s):
+  - {'808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop': 0.7,
+'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.75, 'fast_tempos': 0.7
+, 'growl_or_scream': 0.7, 'palm_muting': 0.65, '@scenario_probability': 0.15406302324794063}
+
+
+Head Concept: pop, Modifier Concept: country
+
+Recommended scenario(s):
+  - {'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75,
+ 'synth_hook': 0.85, 'danceable_groove': 0.8, 'verse_chorus_structure': 0.8, 'radio_friendly_length': 0.7, 'clean_vocals
+': 0.75, '@scenario_probability': 1.4400237599999992}
+
+
+Head Concept: pop, Modifier Concept: metal
+
+Recommended scenario(s):
+  - {'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.75, 'fast_tempos'
+: 0.7, 'growl_or_scream': 0.7, 'palm_muting': 0.65, 'moshpit_energy': 0.6, 'synth_hook': 0.85, 'danceable_groove': 0.8,
+'verse_chorus_structure': 0.8, 'radio_friendly_length': 0.7, 'clean_vocals': 0.75, '@scenario_probability': 0.7891183263
+599999}
+
+
+Head Concept: pop, Modifier Concept: rap
+
+Recommended scenario(s):
+  - {'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_8
+08': 0.7, 'autotune': 0.65, 'battle_attitude': 0.65, 'synth_hook': 0.85, 'danceable_groove': 0.8, 'verse_chorus_structur
+e': 0.8, 'radio_friendly_length': 0.7, 'clean_vocals': 0.75, '@scenario_probability': 0.39080145686400003}
+
+
+Head Concept: pop, Modifier Concept: reggae
+
+Recommended scenario(s):
+  - {'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'jamaican_patois': 0.7, 'storytelling': 0.7, 'roots_vibe'
+: 0.8, 'synth_hook': 0.85, 'danceable_groove': 0.8, 'verse_chorus_structure': 0.8, 'radio_friendly_length': 0.7, 'clean_
+vocals': 0.75, '@scenario_probability': 1.6457414399999997}
+
+
+Head Concept: pop, Modifier Concept: rnb
+
+Recommended scenario(s):
+  - {'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'auto_tune': 0.65, 'romantic_lyrics': 0.8, 'groove_b
+assline': 0.7, 'synth_hook': 0.85, 'danceable_groove': 0.8, 'verse_chorus_structure': 0.8, 'radio_friendly_length': 0.7,
+ 'clean_vocals': 0.75, '@scenario_probability': 1.9793679360000005}
+
+
+Head Concept: pop, Modifier Concept: rock
+
+Recommended scenario(s):
+  - {'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structure': 0.8, 'guitar_solo': 0.7, 'ba
+nd_setup': 0.7, 'synth_hook': 0.85, 'danceable_groove': 0.8, 'radio_friendly_length': 0.7, 'clean_vocals': 0.75, '@scena
+rio_probability': 1.9984003200000002}
+
+
+Head Concept: pop, Modifier Concept: trap
+
+Recommended scenario(s):
+  - {'808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop': 0.7,
+'deadpan_flow': 0.65, 'adlibs': 0.65, 'synth_hook': 0.85, 'danceable_groove': 0.8, 'verse_chorus_structure': 0.8, 'radio
+_friendly_length': 0.7, 'clean_vocals': 0.75, '@scenario_probability': 1.0092311928562498}
+
+
+Head Concept: rap, Modifier Concept: country
+
+Recommended scenario(s):
+  - {'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75,
+ 'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_808':
+ 0.7, 'battle_attitude': 0.65, '@scenario_probability': 0.303269003856}
+  - {'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75,
+ 'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_808':
+ 0.7, 'autotune': 0.65, '@scenario_probability': 0.303269003856}
+
+
+Head Concept: rap, Modifier Concept: metal
+
+Recommended scenario(s):
+  - {'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.75, 'fast_tempos'
+: 0.7, 'growl_or_scream': 0.7, 'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom
+_bap_drums': 0.75, 'trap_808': 0.7, '@scenario_probability': 0.03212318602382399}
+
+
+Head Concept: rap, Modifier Concept: pop
+
+Recommended scenario(s):
+  - {'synth_hook': 0.85, 'danceable_groove': 0.8, 'verse_chorus_structure': 0.8, 'radio_friendly_length': 0.7, 'autotune
+': 0.65, 'clean_vocals': 0.75, 'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom
+_bap_drums': 0.75, 'trap_808': 0.7, 'battle_attitude': 0.65, '@scenario_probability': 0.3908014568640001}
+
+
+Head Concept: rap, Modifier Concept: reggae
+
+Recommended scenario(s):
+  - {'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'jamaican_patois': 0.7, 'storytelling': 0.8, 'roots_vibe'
+: 0.8, 'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_808': 0.7, 'battle_a
+ttitude': 0.65, '@scenario_probability': 0.34659314726400003}
+  - {'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'jamaican_patois': 0.7, 'storytelling': 0.8, 'roots_vibe'
+: 0.8, 'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_808': 0.7, 'autotune
+': 0.65, '@scenario_probability': 0.34659314726400003}
+
+
+Head Concept: rap, Modifier Concept: rnb
+
+Recommended scenario(s):
+  - {'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'auto_tune': 0.65, 'romantic_lyrics': 0.8, 'groove_b
+assline': 0.7, 'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0.7
+5, 'trap_808': 0.7, 'battle_attitude': 0.65, '@scenario_probability': 0.41685488732160003}
+  - {'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'auto_tune': 0.65, 'romantic_lyrics': 0.8, 'groove_b
+assline': 0.7, 'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0.7
+5, 'trap_808': 0.7, 'autotune': 0.65, '@scenario_probability': 0.41685488732160003}
+
+
+Head Concept: rap, Modifier Concept: rock
+
+Recommended scenario(s):
+  - {'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structure': 0.75, 'guitar_solo': 0.7, 'b
+and_setup': 0.7, 'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0
+.75, 'trap_808': 0.7, 'battle_attitude': 0.65, '@scenario_probability': 0.42086310739200006}
+  - {'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structure': 0.75, 'guitar_solo': 0.7, 'b
+and_setup': 0.7, 'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0
+.75, 'trap_808': 0.7, 'autotune': 0.65, '@scenario_probability': 0.42086310739200006}
+
+
+Head Concept: rap, Modifier Concept: trap
+
+Recommended scenario(s):
+  - {'808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop': 0.7,
+'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_808':
+0.7, 'battle_attitude': 0.65, '@scenario_probability': 0.061625209299176247}
+  - {'808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop': 0.7,
+'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_808':
+0.7, 'autotune': 0.65, '@scenario_probability': 0.061625209299176247}
+
+
+Head Concept: reggae, Modifier Concept: country
+
+Recommended scenario(s):
+  - {'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75,
+ 'dub_echo': 0.8, 'laid_back': 0.75, 'jamaican_patois': 0.7, 'storytelling': 0.7, 'roots_vibe': 0.8, '@scenario_probabil
+ity': 1.0164873599999997}
+  - {'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75,
+ 'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'storytelling': 0.7, 'roots_vibe': 0.8, '@scenario_probabilit
+y': 1.0164873599999997}
+  - {'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75,
+ 'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'jamaican_patois': 0.7, 'roots_vibe': 0.8, '@scenario_probabi
+lity': 1.0164873599999997}
+
+
+Head Concept: reggae, Modifier Concept: metal
+
+Recommended scenario(s):
+  - {'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.75, 'fast_tempos'
+: 0.7, 'growl_or_scream': 0.7, 'palm_muting': 0.65, 'moshpit_energy': 0.6, 'dub_echo': 0.8, 'laid_back': 0.75, 'jamaican
+_patois': 0.7, 'storytelling': 0.7, 'roots_vibe': 0.8, '@scenario_probability': 0.55702470096}
+  - {'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.75, 'fast_tempos'
+: 0.7, 'growl_or_scream': 0.7, 'palm_muting': 0.65, 'moshpit_energy': 0.6, 'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop
+_drum': 0.7, 'storytelling': 0.7, 'roots_vibe': 0.8, '@scenario_probability': 0.55702470096}
+
+
+Head Concept: reggae, Modifier Concept: pop
+
+Recommended scenario(s):
+  - {'synth_hook': 0.85, 'danceable_groove': 0.8, 'verse_chorus_structure': 0.8, 'radio_friendly_length': 0.7, 'autotune
+': 0.65, 'clean_vocals': 0.75, 'dub_echo': 0.8, 'laid_back': 0.75, 'jamaican_patois': 0.7, 'storytelling': 0.7, 'roots_v
+ibe': 0.8, '@scenario_probability': 1.3098758400000001}
+  - {'synth_hook': 0.85, 'danceable_groove': 0.8, 'verse_chorus_structure': 0.8, 'radio_friendly_length': 0.7, 'autotune
+': 0.65, 'clean_vocals': 0.75, 'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'storytelling': 0.7, 'roots_vib
+e': 0.8, '@scenario_probability': 1.3098758400000001}
+  - {'synth_hook': 0.85, 'danceable_groove': 0.8, 'verse_chorus_structure': 0.8, 'radio_friendly_length': 0.7, 'autotune
+': 0.65, 'clean_vocals': 0.75, 'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'jamaican_patois': 0.7, 'roots_
+vibe': 0.8, '@scenario_probability': 1.3098758400000001}
+
+
+Head Concept: reggae, Modifier Concept: rap
+
+Recommended scenario(s):
+  - {'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.7, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_8
+08': 0.7, 'autotune': 0.65, 'battle_attitude': 0.65, 'dub_echo': 0.8, 'laid_back': 0.75, 'jamaican_patois': 0.7, 'roots_
+vibe': 0.8, '@scenario_probability': 0.2758598519040001}
+  - {'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.7, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_8
+08': 0.7, 'autotune': 0.65, 'battle_attitude': 0.65, 'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'roots_vi
+be': 0.8, '@scenario_probability': 0.2758598519040001}
+  - {'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_8
+08': 0.7, 'autotune': 0.65, 'battle_attitude': 0.65, 'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'jamaican
+_patois': 0.7, 'roots_vibe': 0.8, '@scenario_probability': 0.2758598519040001}
+
+
+Head Concept: reggae, Modifier Concept: rnb
+
+Recommended scenario(s):
+  - {'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'auto_tune': 0.65, 'romantic_lyrics': 0.8, 'groove_b
+assline': 0.7, 'dub_echo': 0.8, 'laid_back': 0.75, 'jamaican_patois': 0.7, 'storytelling': 0.7, 'roots_vibe': 0.8, '@sce
+nario_probability': 1.3972008960000006}
+  - {'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'auto_tune': 0.65, 'romantic_lyrics': 0.8, 'groove_b
+assline': 0.7, 'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'storytelling': 0.7, 'roots_vibe': 0.8, '@scena
+rio_probability': 1.3972008960000006}
+  - {'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'auto_tune': 0.65, 'romantic_lyrics': 0.8, 'groove_b
+assline': 0.7, 'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'jamaican_patois': 0.7, 'roots_vibe': 0.8, '@sc
+enario_probability': 1.3972008960000006}
+
+
+Head Concept: reggae, Modifier Concept: rock
+
+Recommended scenario(s):
+  - {'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structure': 0.75, 'guitar_solo': 0.7, 'b
+and_setup': 0.7, 'dub_echo': 0.8, 'laid_back': 0.75, 'jamaican_patois': 0.7, 'storytelling': 0.7, 'roots_vibe': 0.8, '@s
+cenario_probability': 1.4106355200000003}
+  - {'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structure': 0.75, 'guitar_solo': 0.7, 'b
+and_setup': 0.7, 'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'storytelling': 0.7, 'roots_vibe': 0.8, '@sce
+nario_probability': 1.4106355200000003}
+  - {'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structure': 0.75, 'guitar_solo': 0.7, 'b
+and_setup': 0.7, 'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'jamaican_patois': 0.7, 'roots_vibe': 0.8, '@
+scenario_probability': 1.4106355200000003}
+
+
+Head Concept: reggae, Modifier Concept: trap
+
+Recommended scenario(s):
+  - {'808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop': 0.7,
+'deadpan_flow': 0.65, 'adlibs': 0.65, 'dub_echo': 0.8, 'laid_back': 0.75, 'jamaican_patois': 0.7, 'storytelling': 0.7, '
+roots_vibe': 0.8, '@scenario_probability': 0.7123984890749999}
+  - {'808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop': 0.7,
+'deadpan_flow': 0.65, 'adlibs': 0.65, 'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'storytelling': 0.7, 'ro
+ots_vibe': 0.8, '@scenario_probability': 0.7123984890749999}
+  - {'808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop': 0.7,
+'deadpan_flow': 0.65, 'adlibs': 0.65, 'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'jamaican_patois': 0.7,
+'roots_vibe': 0.8, '@scenario_probability': 0.7123984890749999}
+
+
+Head Concept: rnb, Modifier Concept: country
+
+Recommended scenario(s):
+  - {'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75,
+ 'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'romantic_lyrics': 0.8, 'groove_bassline': 0.7, '@scenar
+io_probability': 1.5360253439999993}
+
+
+Head Concept: rnb, Modifier Concept: metal
+
+Recommended scenario(s):
+  - {'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.75, 'fast_tempos'
+: 0.7, 'growl_or_scream': 0.7, 'palm_muting': 0.65, 'moshpit_energy': 0.6, 'love_theme': 0.85, 'slow_jam': 0.8, 'melisma
+tic_vocals': 0.8, 'romantic_lyrics': 0.8, 'groove_bassline': 0.7, '@scenario_probability': 0.841726214784}
+
+
+Head Concept: rnb, Modifier Concept: pop
+
+Recommended scenario(s):
+  - {'synth_hook': 0.85, 'danceable_groove': 0.8, 'verse_chorus_structure': 0.8, 'radio_friendly_length': 0.7, 'autotune
+': 0.65, 'clean_vocals': 0.75, 'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'romantic_lyrics': 0.8, 'g
+roove_bassline': 0.7, '@scenario_probability': 1.9793679359999998}
+
+
+Head Concept: rnb, Modifier Concept: rap
+
+Recommended scenario(s):
+  - {'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_8
+08': 0.7, 'autotune': 0.65, 'battle_attitude': 0.65, 'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'rom
+antic_lyrics': 0.8, 'groove_bassline': 0.7, '@scenario_probability': 0.4168548873216}
+
+
+Head Concept: rnb, Modifier Concept: reggae
+
+Recommended scenario(s):
+  - {'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'jamaican_patois': 0.7, 'storytelling': 0.7, 'roots_vibe'
+: 0.8, 'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'romantic_lyrics': 0.8, 'groove_bassline': 0.7, '@
+scenario_probability': 1.755457536}
+
+
+Head Concept: rnb, Modifier Concept: rock
+
+Recommended scenario(s):
+  - {'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structure': 0.75, 'guitar_solo': 0.7, 'b
+and_setup': 0.7, 'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'romantic_lyrics': 0.8, 'groove_bassline
+': 0.7, '@scenario_probability': 2.131627008}
+
+
+Head Concept: rnb, Modifier Concept: trap
+
+Recommended scenario(s):
+  - {'808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop': 0.7,
+'deadpan_flow': 0.65, 'adlibs': 0.65, 'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'romantic_lyrics':
+0.8, 'groove_bassline': 0.7, '@scenario_probability': 1.0765132723799997}
+
+
+Head Concept: rock, Modifier Concept: country
+
+Recommended scenario(s):
+  - {'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75,
+ 'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structure': 0.75, 'guitar_solo': 0.7, '@scen
+ario_probability': 1.23430608}
+
+
+Head Concept: rock, Modifier Concept: metal
+
+Recommended scenario(s):
+  - {'distorted_guitars': 0.8, 'riff': 0.85, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.8, 'fast_tempos'
+: 0.7, 'growl_or_scream': 0.7, 'palm_muting': 0.65, 'moshpit_energy': 0.6, 'verse_chorus_structure': 0.75, 'band_setup':
+ 0.7, '@scenario_probability': 0.6763871368800001}
+
+
+Head Concept: rock, Modifier Concept: pop
+
+Recommended scenario(s):
+  - {'synth_hook': 0.85, 'danceable_groove': 0.8, 'verse_chorus_structure': 0.75, 'radio_friendly_length': 0.7, 'autotun
+e': 0.65, 'clean_vocals': 0.75, 'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'band_setup': 0.7, '@scenar
+io_probability': 1.5905635200000001}
+  - {'synth_hook': 0.85, 'danceable_groove': 0.8, 'verse_chorus_structure': 0.75, 'radio_friendly_length': 0.7, 'autotun
+e': 0.65, 'clean_vocals': 0.75, 'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'guitar_solo': 0.7, '@scena
+rio_probability': 1.5905635200000001}
+
+
+Head Concept: rock, Modifier Concept: rap
+
+Recommended scenario(s):
+  - {'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_8
+08': 0.7, 'autotune': 0.65, 'battle_attitude': 0.65, 'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse
+_chorus_structure': 0.75, 'band_setup': 0.7, '@scenario_probability': 0.3349726773120001}
+  - {'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_8
+08': 0.7, 'autotune': 0.65, 'battle_attitude': 0.65, 'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse
+_chorus_structure': 0.75, 'guitar_solo': 0.7, '@scenario_probability': 0.3349726773120001}
+
+
+Head Concept: rock, Modifier Concept: reggae
+
+Recommended scenario(s):
+  - {'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'jamaican_patois': 0.7, 'storytelling': 0.7, 'roots_vibe'
+: 0.8, 'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structure': 0.75, 'band_setup': 0.7, '
+@scenario_probability': 1.4106355200000003}
+  - {'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'jamaican_patois': 0.7, 'storytelling': 0.7, 'roots_vibe'
+: 0.8, 'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structure': 0.75, 'guitar_solo': 0.7,
+'@scenario_probability': 1.4106355200000003}
+
+
+Head Concept: rock, Modifier Concept: rnb
+
+Recommended scenario(s):
+  - {'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'auto_tune': 0.65, 'romantic_lyrics': 0.8, 'groove_b
+assline': 0.7, 'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structure': 0.75, 'band_setup'
+: 0.7, '@scenario_probability': 1.6966010880000006}
+  - {'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'auto_tune': 0.65, 'romantic_lyrics': 0.8, 'groove_b
+assline': 0.7, 'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structure': 0.75, 'guitar_solo
+': 0.7, '@scenario_probability': 1.6966010880000006}
+
+
+Head Concept: rock, Modifier Concept: trap
+
+Recommended scenario(s):
+  - {'808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop': 0.7,
+'deadpan_flow': 0.65, 'adlibs': 0.65, 'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structu
+re': 0.75, 'band_setup': 0.7, '@scenario_probability': 0.8650553081625}
+  - {'808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop': 0.7,
+'deadpan_flow': 0.65, 'adlibs': 0.65, 'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structu
+re': 0.75, 'guitar_solo': 0.7, '@scenario_probability': 0.8650553081625}
+
+
+Head Concept: trap, Modifier Concept: country
+
+Recommended scenario(s):
+  - {'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75,
+ '808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop': 0.7, 'adl
+ibs': 0.65, '@scenario_probability': 0.7831816722843745}
+  - {'twang_vocals': 0.8, 'banjo': 0.7, 'fiddle': 0.7, 'steel_guitar': 0.7, 'folk_influence': 0.7, 'verse_chorus': 0.75,
+ '808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop': 0.7, 'dea
+dpan_flow': 0.65, '@scenario_probability': 0.7831816722843745}
+
+
+Head Concept: trap, Modifier Concept: metal
+
+Recommended scenario(s):
+  - {'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.75, 'fast_tempos'
+: 0.7, 'growl_or_scream': 0.7, '808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe'
+: 0.7, 'flute_loop': 0.7, 'adlibs': 0.65, '@scenario_probability': 0.1540630232479406}
+  - {'distorted_guitars': 0.9, 'riff': 0.9, 'double_bass': 0.85, 'guitar_solo': 0.8, 'power_chords': 0.75, 'fast_tempos'
+: 0.7, 'growl_or_scream': 0.7, '808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe'
+: 0.7, 'flute_loop': 0.7, 'deadpan_flow': 0.65, '@scenario_probability': 0.1540630232479406}
+
+
+Head Concept: trap, Modifier Concept: pop
+
+Recommended scenario(s):
+  - {'synth_hook': 0.85, 'danceable_groove': 0.8, 'verse_chorus_structure': 0.8, 'radio_friendly_length': 0.7, 'autotune
+': 0.65, 'clean_vocals': 0.75, '808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe'
+: 0.7, 'flute_loop': 0.7, 'deadpan_flow': 0.65, '@scenario_probability': 1.0092311928562498}
+
+
+Head Concept: trap, Modifier Concept: rap
+
+Recommended scenario(s):
+  - {'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_8
+08': 0.7, '808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop':
+0.7, 'adlibs': 0.65, '@scenario_probability': 0.06162520929917624}
+  - {'flow': 0.9, 'rhyme': 0.9, 'punchline': 0.85, 'storytelling': 0.8, 'wordplay': 0.8, 'boom_bap_drums': 0.75, 'trap_8
+08': 0.7, '808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop':
+0.7, 'deadpan_flow': 0.65, '@scenario_probability': 0.06162520929917624}
+
+
+Head Concept: trap, Modifier Concept: reggae
+
+Recommended scenario(s):
+  - {'dub_echo': 0.8, 'laid_back': 0.75, 'one_drop_drum': 0.7, 'jamaican_patois': 0.7, 'storytelling': 0.7, 'roots_vibe'
+: 0.8, '808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop': 0.7
+, 'adlibs': 0.65, '@scenario_probability': 0.8950647683249999}
+
+
+Head Concept: trap, Modifier Concept: rnb
+
+Recommended scenario(s):
+  - {'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'auto_tune': 0.85, 'romantic_lyrics': 0.8, 'groove_b
+assline': 0.7, '808': 0.9, 'hi_hat_triplets': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop': 0.7, 'adlibs':
+ 0.65, '@scenario_probability': 1.07651327238}
+  - {'love_theme': 0.85, 'slow_jam': 0.8, 'melismatic_vocals': 0.8, 'auto_tune': 0.85, 'romantic_lyrics': 0.8, 'groove_b
+assline': 0.7, '808': 0.9, 'hi_hat_triplets': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_loop': 0.7, 'deadpan_
+flow': 0.65, '@scenario_probability': 1.07651327238}
+
+
+Head Concept: trap, Modifier Concept: rock
+
+Recommended scenario(s):
+  - {'distorted_guitars': 0.8, 'riff': 0.85, 'power_chords': 0.8, 'verse_chorus_structure': 0.75, 'guitar_solo': 0.7, 'b
+and_setup': 0.7, '808': 0.9, 'hi_hat_triplets': 0.85, 'auto_tune': 0.85, 'minimal_beat': 0.75, 'dark_vibe': 0.7, 'flute_
+loop': 0.7, 'deadpan_flow': 0.65, '@scenario_probability': 1.0868643615375}
+Prototipi validi (con 'result:'): 56
+Recommender su country_metal.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\country_
+metal.txt
+
+Category prototype:
+
+[('acoustic_guitar', True),
+ ('storytelling', True),
+ ('electric_guitar', False),
+ ('acoustic_drums', False)]
+[]
+
+Recommended artworks:
+
+
+metal_001-1.2
+        metal_001 - Master of Puppets
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_002-1.2
+        metal_002 - Painkiller
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_003-1.2
+        metal_003 - Paranoid
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_004-1.2
+        metal_004 - Enter Sandman
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_001-1.2
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_002-1.2
+        rock_002 - Back in Black
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_003-1.2
+        rock_003 - Seven Nation Army
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_004-1.2
+        rock_004 - Come as You Are
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+country_001-1.2
+        country_001 - Jolene
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+country_002-1.2
+        country_002 - Take Me Home, Country Roads
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+country_003-1.2
+        country_003 - Friends in Low Places
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+rap_002-0.9
+        rap_002 - Juicy
+        \-> matches: ['storytelling']
+
+pop_003-0.9
+        pop_003 - Shape of You
+        \-> matches: ['acoustic_guitar']
+
+rap_001-0.6
+        rap_001 - Lose Yourself
+        \-> matches: ['storytelling']
+
+rap_003-0.6
+        rap_003 - C.R.E.A.M.
+        \-> matches: ['storytelling']
+
+rap_005-0.6
+        rap_005 - Mockingbird
+        \-> matches: ['storytelling']
+
+reggae_001-0.6
+        reggae_001 - No Woman No Cry
+        \-> matches: ['electric_guitar']
+
+reggae_002-0.6
+        reggae_002 - Buffalo Soldier
+        \-> matches: ['storytelling']
+
+rnb_002-0.6
+        rnb_002 - Irreplaceable
+        \-> matches: ['acoustic_guitar']
+
+Classified 19 of 46 contents (41.30434782608695%)
+Recommender su country_pop.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\country_
+pop.txt
+
+Category prototype:
+
+[('acoustic_guitar', True), ('storytelling', True), ('catchy_chorus', False)]
+[]
+
+Recommended artworks:
+
+
+rap_002-1.8
+        rap_002 - Juicy
+        \-> matches: ['storytelling', 'catchy_chorus']
+
+pop_003-1.8
+        pop_003 - Shape of You
+        \-> matches: ['acoustic_guitar', 'catchy_chorus']
+
+country_001-1.7999999999999998
+        country_001 - Jolene
+        \-> matches: ['acoustic_guitar', 'storytelling', 'catchy_chorus']
+
+country_002-1.7999999999999998
+        country_002 - Take Me Home, Country Roads
+        \-> matches: ['acoustic_guitar', 'storytelling', 'catchy_chorus']
+
+country_003-1.7999999999999998
+        country_003 - Friends in Low Places
+        \-> matches: ['acoustic_guitar', 'storytelling', 'catchy_chorus']
+
+rap_001-1.2
+        rap_001 - Lose Yourself
+        \-> matches: ['storytelling', 'catchy_chorus']
+
+rap_003-1.2
+        rap_003 - C.R.E.A.M.
+        \-> matches: ['storytelling', 'catchy_chorus']
+
+reggae_002-1.2
+        reggae_002 - Buffalo Soldier
+        \-> matches: ['storytelling', 'catchy_chorus']
+
+rnb_002-1.2
+        rnb_002 - Irreplaceable
+        \-> matches: ['acoustic_guitar', 'catchy_chorus']
+
+rnb_003-0.9
+        rnb_003 - The Hills
+        \-> matches: ['catchy_chorus']
+
+rap_004-0.6
+        rap_004 - Rap God
+        \-> matches: ['catchy_chorus']
+
+rap_005-0.6
+        rap_005 - Mockingbird
+        \-> matches: ['storytelling']
+
+metal_001-0.6
+        metal_001 - Master of Puppets
+        \-> matches: ['catchy_chorus']
+
+metal_002-0.6
+        metal_002 - Painkiller
+        \-> matches: ['catchy_chorus']
+
+metal_003-0.6
+        metal_003 - Paranoid
+        \-> matches: ['catchy_chorus']
+
+metal_004-0.6
+        metal_004 - Enter Sandman
+        \-> matches: ['catchy_chorus']
+
+rock_001-0.6
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus']
+
+rock_002-0.6
+        rock_002 - Back in Black
+        \-> matches: ['catchy_chorus']
+
+rock_003-0.6
+        rock_003 - Seven Nation Army
+        \-> matches: ['catchy_chorus']
+
+pop_001-0.6
+        pop_001 - Blinding Lights
+        \-> matches: ['catchy_chorus']
+
+pop_002-0.6
+        pop_002 - Bad Romance
+        \-> matches: ['catchy_chorus']
+
+trap_001-0.6
+        trap_001 - Highest in the Room
+        \-> matches: ['catchy_chorus']
+
+trap_002-0.6
+        trap_002 - Mask Off
+        \-> matches: ['catchy_chorus']
+
+trap_003-0.6
+        trap_003 - Bank Account
+        \-> matches: ['catchy_chorus']
+
+reggae_001-0.6
+        reggae_001 - No Woman No Cry
+        \-> matches: ['catchy_chorus']
+
+reggae_003-0.6
+        reggae_003 - Sweat (A La La La La Long)
+        \-> matches: ['catchy_chorus']
+
+rnb_001-0.6
+        rnb_001 - No Scrubs
+        \-> matches: ['catchy_chorus']
+
+trap_future_mask-off-0.6
+        trap_future_mask-off - Mask Off
+        \-> matches: ['catchy_chorus']
+
+metal_judas-prie_painkiller-0.6
+        metal_judas-prie_painkiller - Painkiller
+        \-> matches: ['catchy_chorus']
+
+rock_ac-dc_t-n-t-0.6
+        rock_ac-dc_t-n-t - T.N.T.
+        \-> matches: ['catchy_chorus']
+
+pop_lady-gaga_shallow-0.6
+        pop_lady-gaga_shallow - Shallow
+        \-> matches: ['catchy_chorus']
+
+reggae_bob-marley_one-love-0.6
+        reggae_bob-marley_one-love - One Love
+        \-> matches: ['catchy_chorus']
+
+reggae_inner-circ_bad-boys-0.6
+        reggae_inner-circ_bad-boys - Bad Boys
+        \-> matches: ['catchy_chorus']
+
+rnb_tlc_no-scrubs-with-r-0.6
+        rnb_tlc_no-scrubs-with-r - No Scrubs (With Rap)
+        \-> matches: ['catchy_chorus']
+
+country_john-denve_take-me-home-cou-0.6
+        country_john-denve_take-me-home-cou - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus']
+
+country_dolly-part_jolene-0.6
+        country_dolly-part_jolene - Jolene
+        \-> matches: ['catchy_chorus']
+
+rock_nirvana_smells-like-teen-0.6
+        rock_nirvana_smells-like-teen - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus']
+
+Classified 37 of 46 contents (80.43478260869566%)
+Recommender su country_rap.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\country_
+rap.txt
+
+Category prototype:
+
+[('acoustic_guitar', True),
+ ('storytelling', True),
+ ('spoken_or_rap_vocals', False)]
+[]
+
+Recommended artworks:
+
+
+rap_005-1.2
+        rap_005 - Mockingbird
+        \-> matches: ['storytelling', 'spoken_or_rap_vocals']
+
+country_001-1.2
+        country_001 - Jolene
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+country_002-1.2
+        country_002 - Take Me Home, Country Roads
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+country_003-1.2
+        country_003 - Friends in Low Places
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+rap_002-0.9
+        rap_002 - Juicy
+        \-> matches: ['storytelling']
+
+rap_006-0.9
+        rap_006 - HUMBLE.
+        \-> matches: ['spoken_or_rap_vocals']
+
+pop_003-0.9
+        pop_003 - Shape of You
+        \-> matches: ['acoustic_guitar']
+
+rap_001-0.6
+        rap_001 - Lose Yourself
+        \-> matches: ['storytelling']
+
+rap_003-0.6
+        rap_003 - C.R.E.A.M.
+        \-> matches: ['storytelling']
+
+rap_004-0.6
+        rap_004 - Rap God
+        \-> matches: ['spoken_or_rap_vocals']
+
+trap_004-0.6
+        trap_004 - SICKO MODE
+        \-> matches: ['spoken_or_rap_vocals']
+
+reggae_002-0.6
+        reggae_002 - Buffalo Soldier
+        \-> matches: ['storytelling']
+
+rnb_002-0.6
+        rnb_002 - Irreplaceable
+        \-> matches: ['acoustic_guitar']
+
+Classified 13 of 46 contents (28.26086956521739%)
+Recommender su country_reggae.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\country_
+reggae.txt
+
+Category prototype:
+
+[('acoustic_guitar', True),
+ ('storytelling', True),
+ ('offbeat_rhythm', False),
+ ('bassline', False)]
+[]
+
+Recommended artworks:
+
+
+country_001-1.2
+        country_001 - Jolene
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+country_002-1.2
+        country_002 - Take Me Home, Country Roads
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+country_003-1.2
+        country_003 - Friends in Low Places
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+rap_002-0.9
+        rap_002 - Juicy
+        \-> matches: ['storytelling']
+
+pop_003-0.9
+        pop_003 - Shape of You
+        \-> matches: ['acoustic_guitar']
+
+rap_001-0.6
+        rap_001 - Lose Yourself
+        \-> matches: ['storytelling']
+
+rap_003-0.6
+        rap_003 - C.R.E.A.M.
+        \-> matches: ['storytelling']
+
+rap_005-0.6
+        rap_005 - Mockingbird
+        \-> matches: ['storytelling']
+
+reggae_001-0.6
+        reggae_001 - No Woman No Cry
+        \-> matches: ['offbeat_rhythm']
+
+reggae_002-0.6
+        reggae_002 - Buffalo Soldier
+        \-> matches: ['storytelling']
+
+reggae_003-0.6
+        reggae_003 - Sweat (A La La La La Long)
+        \-> matches: ['offbeat_rhythm']
+
+rnb_002-0.6
+        rnb_002 - Irreplaceable
+        \-> matches: ['acoustic_guitar']
+
+Classified 12 of 46 contents (26.08695652173913%)
+Recommender su country_rnb.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\country_
+rnb.txt
+
+Category prototype:
+
+[('acoustic_guitar', True), ('storytelling', True), ('smooth_vocals', False)]
+[]
+
+Recommended artworks:
+
+
+rnb_002-1.2
+        rnb_002 - Irreplaceable
+        \-> matches: ['acoustic_guitar', 'smooth_vocals']
+
+country_001-1.2
+        country_001 - Jolene
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+country_002-1.2
+        country_002 - Take Me Home, Country Roads
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+country_003-1.2
+        country_003 - Friends in Low Places
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+rap_002-0.9
+        rap_002 - Juicy
+        \-> matches: ['storytelling']
+
+pop_003-0.9
+        pop_003 - Shape of You
+        \-> matches: ['acoustic_guitar']
+
+rap_001-0.6
+        rap_001 - Lose Yourself
+        \-> matches: ['storytelling']
+
+rap_003-0.6
+        rap_003 - C.R.E.A.M.
+        \-> matches: ['storytelling']
+
+rap_005-0.6
+        rap_005 - Mockingbird
+        \-> matches: ['storytelling']
+
+reggae_002-0.6
+        reggae_002 - Buffalo Soldier
+        \-> matches: ['storytelling']
+
+rnb_001-0.6
+        rnb_001 - No Scrubs
+        \-> matches: ['smooth_vocals']
+
+Classified 11 of 46 contents (23.91304347826087%)
+Recommender su country_rock.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\country_
+rock.txt
+
+Category prototype:
+
+[('acoustic_guitar', True),
+ ('storytelling', True),
+ ('electric_guitar', False),
+ ('acoustic_drums', False)]
+[]
+
+Recommended artworks:
+
+
+metal_001-1.2
+        metal_001 - Master of Puppets
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_002-1.2
+        metal_002 - Painkiller
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_003-1.2
+        metal_003 - Paranoid
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_004-1.2
+        metal_004 - Enter Sandman
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_001-1.2
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_002-1.2
+        rock_002 - Back in Black
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_003-1.2
+        rock_003 - Seven Nation Army
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_004-1.2
+        rock_004 - Come as You Are
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+country_001-1.2
+        country_001 - Jolene
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+country_002-1.2
+        country_002 - Take Me Home, Country Roads
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+country_003-1.2
+        country_003 - Friends in Low Places
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+rap_002-0.9
+        rap_002 - Juicy
+        \-> matches: ['storytelling']
+
+pop_003-0.9
+        pop_003 - Shape of You
+        \-> matches: ['acoustic_guitar']
+
+rap_001-0.6
+        rap_001 - Lose Yourself
+        \-> matches: ['storytelling']
+
+rap_003-0.6
+        rap_003 - C.R.E.A.M.
+        \-> matches: ['storytelling']
+
+rap_005-0.6
+        rap_005 - Mockingbird
+        \-> matches: ['storytelling']
+
+reggae_001-0.6
+        reggae_001 - No Woman No Cry
+        \-> matches: ['electric_guitar']
+
+reggae_002-0.6
+        reggae_002 - Buffalo Soldier
+        \-> matches: ['storytelling']
+
+rnb_002-0.6
+        rnb_002 - Irreplaceable
+        \-> matches: ['acoustic_guitar']
+
+Classified 19 of 46 contents (41.30434782608695%)
+Recommender su country_trap.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\country_
+trap.txt
+
+Category prototype:
+
+[('acoustic_guitar', True),
+ ('storytelling', True),
+ ('808', False),
+ ('hi_hat_triplets', False),
+ ('auto_tune', False)]
+[]
+
+Recommended artworks:
+
+
+rnb_003-1.8
+        rnb_003 - The Hills
+        \-> matches: ['808', 'auto_tune']
+
+trap_001-1.2
+        trap_001 - Highest in the Room
+        \-> matches: ['hi_hat_triplets', 'auto_tune']
+
+country_001-1.2
+        country_001 - Jolene
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+country_002-1.2
+        country_002 - Take Me Home, Country Roads
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+country_003-1.2
+        country_003 - Friends in Low Places
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+rap_002-0.9
+        rap_002 - Juicy
+        \-> matches: ['storytelling']
+
+rap_006-0.9
+        rap_006 - HUMBLE.
+        \-> matches: ['hi_hat_triplets']
+
+pop_003-0.9
+        pop_003 - Shape of You
+        \-> matches: ['acoustic_guitar']
+
+rap_001-0.6
+        rap_001 - Lose Yourself
+        \-> matches: ['storytelling']
+
+rap_003-0.6
+        rap_003 - C.R.E.A.M.
+        \-> matches: ['storytelling']
+
+rap_005-0.6
+        rap_005 - Mockingbird
+        \-> matches: ['storytelling']
+
+trap_002-0.6
+        trap_002 - Mask Off
+        \-> matches: ['auto_tune']
+
+trap_004-0.6
+        trap_004 - SICKO MODE
+        \-> matches: ['hi_hat_triplets']
+
+reggae_002-0.6
+        reggae_002 - Buffalo Soldier
+        \-> matches: ['storytelling']
+
+rnb_002-0.6
+        rnb_002 - Irreplaceable
+        \-> matches: ['acoustic_guitar']
+
+Classified 15 of 46 contents (32.608695652173914%)
+Recommender su metal_country.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\metal_co
+untry.txt
+
+Category prototype:
+
+[('electric_guitar', True),
+ ('acoustic_drums', True),
+ ('acoustic_guitar', False),
+ ('storytelling', False)]
+[]
+
+Recommended artworks:
+
+
+metal_001-1.2
+        metal_001 - Master of Puppets
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_002-1.2
+        metal_002 - Painkiller
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_003-1.2
+        metal_003 - Paranoid
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_004-1.2
+        metal_004 - Enter Sandman
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_001-1.2
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_002-1.2
+        rock_002 - Back in Black
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_003-1.2
+        rock_003 - Seven Nation Army
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_004-1.2
+        rock_004 - Come as You Are
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+country_001-1.2
+        country_001 - Jolene
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+country_002-1.2
+        country_002 - Take Me Home, Country Roads
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+country_003-1.2
+        country_003 - Friends in Low Places
+        \-> matches: ['acoustic_guitar', 'storytelling']
+
+rap_002-0.9
+        rap_002 - Juicy
+        \-> matches: ['storytelling']
+
+pop_003-0.9
+        pop_003 - Shape of You
+        \-> matches: ['acoustic_guitar']
+
+rap_001-0.6
+        rap_001 - Lose Yourself
+        \-> matches: ['storytelling']
+
+rap_003-0.6
+        rap_003 - C.R.E.A.M.
+        \-> matches: ['storytelling']
+
+rap_005-0.6
+        rap_005 - Mockingbird
+        \-> matches: ['storytelling']
+
+reggae_001-0.6
+        reggae_001 - No Woman No Cry
+        \-> matches: ['electric_guitar']
+
+reggae_002-0.6
+        reggae_002 - Buffalo Soldier
+        \-> matches: ['storytelling']
+
+rnb_002-0.6
+        rnb_002 - Irreplaceable
+        \-> matches: ['acoustic_guitar']
+
+Classified 19 of 46 contents (41.30434782608695%)
+Recommender su metal_pop.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\metal_po
+p.txt
+
+Category prototype:
+
+[('electric_guitar', True), ('acoustic_drums', True), ('catchy_chorus', False)]
+[]
+
+Recommended artworks:
+
+
+metal_001-1.7999999999999998
+        metal_001 - Master of Puppets
+        \-> matches: ['electric_guitar', 'acoustic_drums', 'catchy_chorus']
+
+metal_002-1.7999999999999998
+        metal_002 - Painkiller
+        \-> matches: ['electric_guitar', 'acoustic_drums', 'catchy_chorus']
+
+metal_003-1.7999999999999998
+        metal_003 - Paranoid
+        \-> matches: ['electric_guitar', 'acoustic_drums', 'catchy_chorus']
+
+metal_004-1.7999999999999998
+        metal_004 - Enter Sandman
+        \-> matches: ['electric_guitar', 'acoustic_drums', 'catchy_chorus']
+
+rock_001-1.7999999999999998
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['electric_guitar', 'acoustic_drums', 'catchy_chorus']
+
+rock_002-1.7999999999999998
+        rock_002 - Back in Black
+        \-> matches: ['electric_guitar', 'acoustic_drums', 'catchy_chorus']
+
+rock_003-1.7999999999999998
+        rock_003 - Seven Nation Army
+        \-> matches: ['electric_guitar', 'acoustic_drums', 'catchy_chorus']
+
+rock_004-1.2
+        rock_004 - Come as You Are
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+reggae_001-1.2
+        reggae_001 - No Woman No Cry
+        \-> matches: ['electric_guitar', 'catchy_chorus']
+
+rap_002-0.9
+        rap_002 - Juicy
+        \-> matches: ['catchy_chorus']
+
+pop_003-0.9
+        pop_003 - Shape of You
+        \-> matches: ['catchy_chorus']
+
+rnb_003-0.9
+        rnb_003 - The Hills
+        \-> matches: ['catchy_chorus']
+
+rap_001-0.6
+        rap_001 - Lose Yourself
+        \-> matches: ['catchy_chorus']
+
+rap_003-0.6
+        rap_003 - C.R.E.A.M.
+        \-> matches: ['catchy_chorus']
+
+rap_004-0.6
+        rap_004 - Rap God
+        \-> matches: ['catchy_chorus']
+
+pop_001-0.6
+        pop_001 - Blinding Lights
+        \-> matches: ['catchy_chorus']
+
+pop_002-0.6
+        pop_002 - Bad Romance
+        \-> matches: ['catchy_chorus']
+
+trap_001-0.6
+        trap_001 - Highest in the Room
+        \-> matches: ['catchy_chorus']
+
+trap_002-0.6
+        trap_002 - Mask Off
+        \-> matches: ['catchy_chorus']
+
+trap_003-0.6
+        trap_003 - Bank Account
+        \-> matches: ['catchy_chorus']
+
+reggae_002-0.6
+        reggae_002 - Buffalo Soldier
+        \-> matches: ['catchy_chorus']
+
+reggae_003-0.6
+        reggae_003 - Sweat (A La La La La Long)
+        \-> matches: ['catchy_chorus']
+
+rnb_001-0.6
+        rnb_001 - No Scrubs
+        \-> matches: ['catchy_chorus']
+
+rnb_002-0.6
+        rnb_002 - Irreplaceable
+        \-> matches: ['catchy_chorus']
+
+country_001-0.6
+        country_001 - Jolene
+        \-> matches: ['catchy_chorus']
+
+country_002-0.6
+        country_002 - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus']
+
+country_003-0.6
+        country_003 - Friends in Low Places
+        \-> matches: ['catchy_chorus']
+
+trap_future_mask-off-0.6
+        trap_future_mask-off - Mask Off
+        \-> matches: ['catchy_chorus']
+
+metal_judas-prie_painkiller-0.6
+        metal_judas-prie_painkiller - Painkiller
+        \-> matches: ['catchy_chorus']
+
+rock_ac-dc_t-n-t-0.6
+        rock_ac-dc_t-n-t - T.N.T.
+        \-> matches: ['catchy_chorus']
+
+pop_lady-gaga_shallow-0.6
+        pop_lady-gaga_shallow - Shallow
+        \-> matches: ['catchy_chorus']
+
+reggae_bob-marley_one-love-0.6
+        reggae_bob-marley_one-love - One Love
+        \-> matches: ['catchy_chorus']
+
+reggae_inner-circ_bad-boys-0.6
+        reggae_inner-circ_bad-boys - Bad Boys
+        \-> matches: ['catchy_chorus']
+
+rnb_tlc_no-scrubs-with-r-0.6
+        rnb_tlc_no-scrubs-with-r - No Scrubs (With Rap)
+        \-> matches: ['catchy_chorus']
+
+country_john-denve_take-me-home-cou-0.6
+        country_john-denve_take-me-home-cou - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus']
+
+country_dolly-part_jolene-0.6
+        country_dolly-part_jolene - Jolene
+        \-> matches: ['catchy_chorus']
+
+rock_nirvana_smells-like-teen-0.6
+        rock_nirvana_smells-like-teen - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus']
+
+Classified 37 of 46 contents (80.43478260869566%)
+Recommender su metal_rap.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\metal_ra
+p.txt
+
+Category prototype:
+
+[('electric_guitar', True),
+ ('acoustic_drums', True),
+ ('spoken_or_rap_vocals', False)]
+[]
+
+Recommended artworks:
+
+
+metal_001-1.2
+        metal_001 - Master of Puppets
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_002-1.2
+        metal_002 - Painkiller
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_003-1.2
+        metal_003 - Paranoid
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_004-1.2
+        metal_004 - Enter Sandman
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_001-1.2
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_002-1.2
+        rock_002 - Back in Black
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_003-1.2
+        rock_003 - Seven Nation Army
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_004-1.2
+        rock_004 - Come as You Are
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rap_006-0.9
+        rap_006 - HUMBLE.
+        \-> matches: ['spoken_or_rap_vocals']
+
+rap_004-0.6
+        rap_004 - Rap God
+        \-> matches: ['spoken_or_rap_vocals']
+
+rap_005-0.6
+        rap_005 - Mockingbird
+        \-> matches: ['spoken_or_rap_vocals']
+
+trap_004-0.6
+        trap_004 - SICKO MODE
+        \-> matches: ['spoken_or_rap_vocals']
+
+reggae_001-0.6
+        reggae_001 - No Woman No Cry
+        \-> matches: ['electric_guitar']
+
+Classified 13 of 46 contents (28.26086956521739%)
+Recommender su metal_reggae.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\metal_re
+ggae.txt
+
+Category prototype:
+
+[('electric_guitar', True),
+ ('acoustic_drums', True),
+ ('offbeat_rhythm', False),
+ ('bassline', False)]
+[]
+
+Recommended artworks:
+
+
+metal_001-1.2
+        metal_001 - Master of Puppets
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_002-1.2
+        metal_002 - Painkiller
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_003-1.2
+        metal_003 - Paranoid
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_004-1.2
+        metal_004 - Enter Sandman
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_001-1.2
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_002-1.2
+        rock_002 - Back in Black
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_003-1.2
+        rock_003 - Seven Nation Army
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_004-1.2
+        rock_004 - Come as You Are
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+reggae_001-1.2
+        reggae_001 - No Woman No Cry
+        \-> matches: ['electric_guitar', 'offbeat_rhythm']
+
+reggae_003-0.6
+        reggae_003 - Sweat (A La La La La Long)
+        \-> matches: ['offbeat_rhythm']
+
+Classified 10 of 46 contents (21.73913043478261%)
+Recommender su metal_rnb.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\metal_rn
+b.txt
+
+Category prototype:
+
+[('electric_guitar', True), ('acoustic_drums', True), ('smooth_vocals', False)]
+[]
+
+Recommended artworks:
+
+
+metal_001-1.2
+        metal_001 - Master of Puppets
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_002-1.2
+        metal_002 - Painkiller
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_003-1.2
+        metal_003 - Paranoid
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_004-1.2
+        metal_004 - Enter Sandman
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_001-1.2
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_002-1.2
+        rock_002 - Back in Black
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_003-1.2
+        rock_003 - Seven Nation Army
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_004-1.2
+        rock_004 - Come as You Are
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+reggae_001-0.6
+        reggae_001 - No Woman No Cry
+        \-> matches: ['electric_guitar']
+
+rnb_001-0.6
+        rnb_001 - No Scrubs
+        \-> matches: ['smooth_vocals']
+
+rnb_002-0.6
+        rnb_002 - Irreplaceable
+        \-> matches: ['smooth_vocals']
+
+Classified 11 of 46 contents (23.91304347826087%)
+Recommender su metal_rock.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\metal_ro
+ck.txt
+
+Category prototype:
+
+[('electric_guitar', True),
+ ('acoustic_drums', True),
+ ('electric_guitar', False),
+ ('acoustic_drums', False)]
+[]
+
+Recommended artworks:
+
+
+metal_001-1.2
+        metal_001 - Master of Puppets
+        \-> matches: ['electric_guitar', 'acoustic_drums', 'electric_guitar', 'acoustic_drums']
+
+metal_002-1.2
+        metal_002 - Painkiller
+        \-> matches: ['electric_guitar', 'acoustic_drums', 'electric_guitar', 'acoustic_drums']
+
+metal_003-1.2
+        metal_003 - Paranoid
+        \-> matches: ['electric_guitar', 'acoustic_drums', 'electric_guitar', 'acoustic_drums']
+
+metal_004-1.2
+        metal_004 - Enter Sandman
+        \-> matches: ['electric_guitar', 'acoustic_drums', 'electric_guitar', 'acoustic_drums']
+
+rock_001-1.2
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['electric_guitar', 'acoustic_drums', 'electric_guitar', 'acoustic_drums']
+
+rock_002-1.2
+        rock_002 - Back in Black
+        \-> matches: ['electric_guitar', 'acoustic_drums', 'electric_guitar', 'acoustic_drums']
+
+rock_003-1.2
+        rock_003 - Seven Nation Army
+        \-> matches: ['electric_guitar', 'acoustic_drums', 'electric_guitar', 'acoustic_drums']
+
+rock_004-1.2
+        rock_004 - Come as You Are
+        \-> matches: ['electric_guitar', 'acoustic_drums', 'electric_guitar', 'acoustic_drums']
+
+reggae_001-0.6
+        reggae_001 - No Woman No Cry
+        \-> matches: ['electric_guitar', 'electric_guitar']
+
+Classified 9 of 46 contents (19.565217391304348%)
+Recommender su metal_trap.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\metal_tr
+ap.txt
+
+Category prototype:
+
+[('electric_guitar', True),
+ ('acoustic_drums', True),
+ ('808', False),
+ ('hi_hat_triplets', False),
+ ('auto_tune', False)]
+[]
+
+Recommended artworks:
+
+
+rnb_003-1.8
+        rnb_003 - The Hills
+        \-> matches: ['808', 'auto_tune']
+
+metal_001-1.2
+        metal_001 - Master of Puppets
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_002-1.2
+        metal_002 - Painkiller
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_003-1.2
+        metal_003 - Paranoid
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+metal_004-1.2
+        metal_004 - Enter Sandman
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_001-1.2
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_002-1.2
+        rock_002 - Back in Black
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_003-1.2
+        rock_003 - Seven Nation Army
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+rock_004-1.2
+        rock_004 - Come as You Are
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+trap_001-1.2
+        trap_001 - Highest in the Room
+        \-> matches: ['hi_hat_triplets', 'auto_tune']
+
+rap_006-0.9
+        rap_006 - HUMBLE.
+        \-> matches: ['hi_hat_triplets']
+
+trap_002-0.6
+        trap_002 - Mask Off
+        \-> matches: ['auto_tune']
+
+trap_004-0.6
+        trap_004 - SICKO MODE
+        \-> matches: ['hi_hat_triplets']
+
+reggae_001-0.6
+        reggae_001 - No Woman No Cry
+        \-> matches: ['electric_guitar']
+
+Classified 14 of 46 contents (30.434782608695652%)
+Recommender su pop_country.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\pop_coun
+try.txt
+
+Category prototype:
+
+[('catchy_chorus', True), ('acoustic_guitar', False), ('storytelling', False)]
+[]
+
+Recommended artworks:
+
+
+rap_002-1.8
+        rap_002 - Juicy
+        \-> matches: ['catchy_chorus', 'storytelling']
+
+pop_003-1.8
+        pop_003 - Shape of You
+        \-> matches: ['catchy_chorus', 'acoustic_guitar']
+
+country_001-1.7999999999999998
+        country_001 - Jolene
+        \-> matches: ['catchy_chorus', 'acoustic_guitar', 'storytelling']
+
+country_002-1.7999999999999998
+        country_002 - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus', 'acoustic_guitar', 'storytelling']
+
+country_003-1.7999999999999998
+        country_003 - Friends in Low Places
+        \-> matches: ['catchy_chorus', 'acoustic_guitar', 'storytelling']
+
+rap_001-1.2
+        rap_001 - Lose Yourself
+        \-> matches: ['catchy_chorus', 'storytelling']
+
+rap_003-1.2
+        rap_003 - C.R.E.A.M.
+        \-> matches: ['catchy_chorus', 'storytelling']
+
+reggae_002-1.2
+        reggae_002 - Buffalo Soldier
+        \-> matches: ['catchy_chorus', 'storytelling']
+
+rnb_002-1.2
+        rnb_002 - Irreplaceable
+        \-> matches: ['catchy_chorus', 'acoustic_guitar']
+
+rnb_003-0.9
+        rnb_003 - The Hills
+        \-> matches: ['catchy_chorus']
+
+rap_004-0.6
+        rap_004 - Rap God
+        \-> matches: ['catchy_chorus']
+
+rap_005-0.6
+        rap_005 - Mockingbird
+        \-> matches: ['storytelling']
+
+metal_001-0.6
+        metal_001 - Master of Puppets
+        \-> matches: ['catchy_chorus']
+
+metal_002-0.6
+        metal_002 - Painkiller
+        \-> matches: ['catchy_chorus']
+
+metal_003-0.6
+        metal_003 - Paranoid
+        \-> matches: ['catchy_chorus']
+
+metal_004-0.6
+        metal_004 - Enter Sandman
+        \-> matches: ['catchy_chorus']
+
+rock_001-0.6
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus']
+
+rock_002-0.6
+        rock_002 - Back in Black
+        \-> matches: ['catchy_chorus']
+
+rock_003-0.6
+        rock_003 - Seven Nation Army
+        \-> matches: ['catchy_chorus']
+
+pop_001-0.6
+        pop_001 - Blinding Lights
+        \-> matches: ['catchy_chorus']
+
+pop_002-0.6
+        pop_002 - Bad Romance
+        \-> matches: ['catchy_chorus']
+
+trap_001-0.6
+        trap_001 - Highest in the Room
+        \-> matches: ['catchy_chorus']
+
+trap_002-0.6
+        trap_002 - Mask Off
+        \-> matches: ['catchy_chorus']
+
+trap_003-0.6
+        trap_003 - Bank Account
+        \-> matches: ['catchy_chorus']
+
+reggae_001-0.6
+        reggae_001 - No Woman No Cry
+        \-> matches: ['catchy_chorus']
+
+reggae_003-0.6
+        reggae_003 - Sweat (A La La La La Long)
+        \-> matches: ['catchy_chorus']
+
+rnb_001-0.6
+        rnb_001 - No Scrubs
+        \-> matches: ['catchy_chorus']
+
+trap_future_mask-off-0.6
+        trap_future_mask-off - Mask Off
+        \-> matches: ['catchy_chorus']
+
+metal_judas-prie_painkiller-0.6
+        metal_judas-prie_painkiller - Painkiller
+        \-> matches: ['catchy_chorus']
+
+rock_ac-dc_t-n-t-0.6
+        rock_ac-dc_t-n-t - T.N.T.
+        \-> matches: ['catchy_chorus']
+
+pop_lady-gaga_shallow-0.6
+        pop_lady-gaga_shallow - Shallow
+        \-> matches: ['catchy_chorus']
+
+reggae_bob-marley_one-love-0.6
+        reggae_bob-marley_one-love - One Love
+        \-> matches: ['catchy_chorus']
+
+reggae_inner-circ_bad-boys-0.6
+        reggae_inner-circ_bad-boys - Bad Boys
+        \-> matches: ['catchy_chorus']
+
+rnb_tlc_no-scrubs-with-r-0.6
+        rnb_tlc_no-scrubs-with-r - No Scrubs (With Rap)
+        \-> matches: ['catchy_chorus']
+
+country_john-denve_take-me-home-cou-0.6
+        country_john-denve_take-me-home-cou - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus']
+
+country_dolly-part_jolene-0.6
+        country_dolly-part_jolene - Jolene
+        \-> matches: ['catchy_chorus']
+
+rock_nirvana_smells-like-teen-0.6
+        rock_nirvana_smells-like-teen - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus']
+
+Classified 37 of 46 contents (80.43478260869566%)
+Recommender su pop_metal.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\pop_meta
+l.txt
+
+Category prototype:
+
+[('catchy_chorus', True), ('electric_guitar', False), ('acoustic_drums', False)]
+[]
+
+Recommended artworks:
+
+
+metal_001-1.7999999999999998
+        metal_001 - Master of Puppets
+        \-> matches: ['catchy_chorus', 'electric_guitar', 'acoustic_drums']
+
+metal_002-1.7999999999999998
+        metal_002 - Painkiller
+        \-> matches: ['catchy_chorus', 'electric_guitar', 'acoustic_drums']
+
+metal_003-1.7999999999999998
+        metal_003 - Paranoid
+        \-> matches: ['catchy_chorus', 'electric_guitar', 'acoustic_drums']
+
+metal_004-1.7999999999999998
+        metal_004 - Enter Sandman
+        \-> matches: ['catchy_chorus', 'electric_guitar', 'acoustic_drums']
+
+rock_001-1.7999999999999998
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus', 'electric_guitar', 'acoustic_drums']
+
+rock_002-1.7999999999999998
+        rock_002 - Back in Black
+        \-> matches: ['catchy_chorus', 'electric_guitar', 'acoustic_drums']
+
+rock_003-1.7999999999999998
+        rock_003 - Seven Nation Army
+        \-> matches: ['catchy_chorus', 'electric_guitar', 'acoustic_drums']
+
+rock_004-1.2
+        rock_004 - Come as You Are
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+reggae_001-1.2
+        reggae_001 - No Woman No Cry
+        \-> matches: ['catchy_chorus', 'electric_guitar']
+
+rap_002-0.9
+        rap_002 - Juicy
+        \-> matches: ['catchy_chorus']
+
+pop_003-0.9
+        pop_003 - Shape of You
+        \-> matches: ['catchy_chorus']
+
+rnb_003-0.9
+        rnb_003 - The Hills
+        \-> matches: ['catchy_chorus']
+
+rap_001-0.6
+        rap_001 - Lose Yourself
+        \-> matches: ['catchy_chorus']
+
+rap_003-0.6
+        rap_003 - C.R.E.A.M.
+        \-> matches: ['catchy_chorus']
+
+rap_004-0.6
+        rap_004 - Rap God
+        \-> matches: ['catchy_chorus']
+
+pop_001-0.6
+        pop_001 - Blinding Lights
+        \-> matches: ['catchy_chorus']
+
+pop_002-0.6
+        pop_002 - Bad Romance
+        \-> matches: ['catchy_chorus']
+
+trap_001-0.6
+        trap_001 - Highest in the Room
+        \-> matches: ['catchy_chorus']
+
+trap_002-0.6
+        trap_002 - Mask Off
+        \-> matches: ['catchy_chorus']
+
+trap_003-0.6
+        trap_003 - Bank Account
+        \-> matches: ['catchy_chorus']
+
+reggae_002-0.6
+        reggae_002 - Buffalo Soldier
+        \-> matches: ['catchy_chorus']
+
+reggae_003-0.6
+        reggae_003 - Sweat (A La La La La Long)
+        \-> matches: ['catchy_chorus']
+
+rnb_001-0.6
+        rnb_001 - No Scrubs
+        \-> matches: ['catchy_chorus']
+
+rnb_002-0.6
+        rnb_002 - Irreplaceable
+        \-> matches: ['catchy_chorus']
+
+country_001-0.6
+        country_001 - Jolene
+        \-> matches: ['catchy_chorus']
+
+country_002-0.6
+        country_002 - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus']
+
+country_003-0.6
+        country_003 - Friends in Low Places
+        \-> matches: ['catchy_chorus']
+
+trap_future_mask-off-0.6
+        trap_future_mask-off - Mask Off
+        \-> matches: ['catchy_chorus']
+
+metal_judas-prie_painkiller-0.6
+        metal_judas-prie_painkiller - Painkiller
+        \-> matches: ['catchy_chorus']
+
+rock_ac-dc_t-n-t-0.6
+        rock_ac-dc_t-n-t - T.N.T.
+        \-> matches: ['catchy_chorus']
+
+pop_lady-gaga_shallow-0.6
+        pop_lady-gaga_shallow - Shallow
+        \-> matches: ['catchy_chorus']
+
+reggae_bob-marley_one-love-0.6
+        reggae_bob-marley_one-love - One Love
+        \-> matches: ['catchy_chorus']
+
+reggae_inner-circ_bad-boys-0.6
+        reggae_inner-circ_bad-boys - Bad Boys
+        \-> matches: ['catchy_chorus']
+
+rnb_tlc_no-scrubs-with-r-0.6
+        rnb_tlc_no-scrubs-with-r - No Scrubs (With Rap)
+        \-> matches: ['catchy_chorus']
+
+country_john-denve_take-me-home-cou-0.6
+        country_john-denve_take-me-home-cou - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus']
+
+country_dolly-part_jolene-0.6
+        country_dolly-part_jolene - Jolene
+        \-> matches: ['catchy_chorus']
+
+rock_nirvana_smells-like-teen-0.6
+        rock_nirvana_smells-like-teen - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus']
+
+Classified 37 of 46 contents (80.43478260869566%)
+Recommender su pop_rap.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\pop_rap.
+txt
+
+Category prototype:
+
+[('catchy_chorus', True), ('spoken_or_rap_vocals', False)]
+[]
+
+Recommended artworks:
+
+
+rap_004-1.2
+        rap_004 - Rap God
+        \-> matches: ['catchy_chorus', 'spoken_or_rap_vocals']
+
+rap_002-0.9
+        rap_002 - Juicy
+        \-> matches: ['catchy_chorus']
+
+rap_006-0.9
+        rap_006 - HUMBLE.
+        \-> matches: ['spoken_or_rap_vocals']
+
+pop_003-0.9
+        pop_003 - Shape of You
+        \-> matches: ['catchy_chorus']
+
+rnb_003-0.9
+        rnb_003 - The Hills
+        \-> matches: ['catchy_chorus']
+
+rap_001-0.6
+        rap_001 - Lose Yourself
+        \-> matches: ['catchy_chorus']
+
+rap_003-0.6
+        rap_003 - C.R.E.A.M.
+        \-> matches: ['catchy_chorus']
+
+rap_005-0.6
+        rap_005 - Mockingbird
+        \-> matches: ['spoken_or_rap_vocals']
+
+metal_001-0.6
+        metal_001 - Master of Puppets
+        \-> matches: ['catchy_chorus']
+
+metal_002-0.6
+        metal_002 - Painkiller
+        \-> matches: ['catchy_chorus']
+
+metal_003-0.6
+        metal_003 - Paranoid
+        \-> matches: ['catchy_chorus']
+
+metal_004-0.6
+        metal_004 - Enter Sandman
+        \-> matches: ['catchy_chorus']
+
+rock_001-0.6
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus']
+
+rock_002-0.6
+        rock_002 - Back in Black
+        \-> matches: ['catchy_chorus']
+
+rock_003-0.6
+        rock_003 - Seven Nation Army
+        \-> matches: ['catchy_chorus']
+
+pop_001-0.6
+        pop_001 - Blinding Lights
+        \-> matches: ['catchy_chorus']
+
+pop_002-0.6
+        pop_002 - Bad Romance
+        \-> matches: ['catchy_chorus']
+
+trap_001-0.6
+        trap_001 - Highest in the Room
+        \-> matches: ['catchy_chorus']
+
+trap_002-0.6
+        trap_002 - Mask Off
+        \-> matches: ['catchy_chorus']
+
+trap_003-0.6
+        trap_003 - Bank Account
+        \-> matches: ['catchy_chorus']
+
+trap_004-0.6
+        trap_004 - SICKO MODE
+        \-> matches: ['spoken_or_rap_vocals']
+
+reggae_001-0.6
+        reggae_001 - No Woman No Cry
+        \-> matches: ['catchy_chorus']
+
+reggae_002-0.6
+        reggae_002 - Buffalo Soldier
+        \-> matches: ['catchy_chorus']
+
+reggae_003-0.6
+        reggae_003 - Sweat (A La La La La Long)
+        \-> matches: ['catchy_chorus']
+
+rnb_001-0.6
+        rnb_001 - No Scrubs
+        \-> matches: ['catchy_chorus']
+
+rnb_002-0.6
+        rnb_002 - Irreplaceable
+        \-> matches: ['catchy_chorus']
+
+country_001-0.6
+        country_001 - Jolene
+        \-> matches: ['catchy_chorus']
+
+country_002-0.6
+        country_002 - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus']
+
+country_003-0.6
+        country_003 - Friends in Low Places
+        \-> matches: ['catchy_chorus']
+
+trap_future_mask-off-0.6
+        trap_future_mask-off - Mask Off
+        \-> matches: ['catchy_chorus']
+
+metal_judas-prie_painkiller-0.6
+        metal_judas-prie_painkiller - Painkiller
+        \-> matches: ['catchy_chorus']
+
+rock_ac-dc_t-n-t-0.6
+        rock_ac-dc_t-n-t - T.N.T.
+        \-> matches: ['catchy_chorus']
+
+pop_lady-gaga_shallow-0.6
+        pop_lady-gaga_shallow - Shallow
+        \-> matches: ['catchy_chorus']
+
+reggae_bob-marley_one-love-0.6
+        reggae_bob-marley_one-love - One Love
+        \-> matches: ['catchy_chorus']
+
+reggae_inner-circ_bad-boys-0.6
+        reggae_inner-circ_bad-boys - Bad Boys
+        \-> matches: ['catchy_chorus']
+
+rnb_tlc_no-scrubs-with-r-0.6
+        rnb_tlc_no-scrubs-with-r - No Scrubs (With Rap)
+        \-> matches: ['catchy_chorus']
+
+country_john-denve_take-me-home-cou-0.6
+        country_john-denve_take-me-home-cou - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus']
+
+country_dolly-part_jolene-0.6
+        country_dolly-part_jolene - Jolene
+        \-> matches: ['catchy_chorus']
+
+rock_nirvana_smells-like-teen-0.6
+        rock_nirvana_smells-like-teen - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus']
+
+Classified 39 of 46 contents (84.78260869565217%)
+Recommender su pop_reggae.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\pop_regg
+ae.txt
+
+Category prototype:
+
+[('catchy_chorus', True), ('offbeat_rhythm', False), ('bassline', False)]
+[]
+
+Recommended artworks:
+
+
+reggae_001-1.2
+        reggae_001 - No Woman No Cry
+        \-> matches: ['catchy_chorus', 'offbeat_rhythm']
+
+reggae_003-1.2
+        reggae_003 - Sweat (A La La La La Long)
+        \-> matches: ['catchy_chorus', 'offbeat_rhythm']
+
+rap_002-0.9
+        rap_002 - Juicy
+        \-> matches: ['catchy_chorus']
+
+pop_003-0.9
+        pop_003 - Shape of You
+        \-> matches: ['catchy_chorus']
+
+rnb_003-0.9
+        rnb_003 - The Hills
+        \-> matches: ['catchy_chorus']
+
+rap_001-0.6
+        rap_001 - Lose Yourself
+        \-> matches: ['catchy_chorus']
+
+rap_003-0.6
+        rap_003 - C.R.E.A.M.
+        \-> matches: ['catchy_chorus']
+
+rap_004-0.6
+        rap_004 - Rap God
+        \-> matches: ['catchy_chorus']
+
+metal_001-0.6
+        metal_001 - Master of Puppets
+        \-> matches: ['catchy_chorus']
+
+metal_002-0.6
+        metal_002 - Painkiller
+        \-> matches: ['catchy_chorus']
+
+metal_003-0.6
+        metal_003 - Paranoid
+        \-> matches: ['catchy_chorus']
+
+metal_004-0.6
+        metal_004 - Enter Sandman
+        \-> matches: ['catchy_chorus']
+
+rock_001-0.6
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus']
+
+rock_002-0.6
+        rock_002 - Back in Black
+        \-> matches: ['catchy_chorus']
+
+rock_003-0.6
+        rock_003 - Seven Nation Army
+        \-> matches: ['catchy_chorus']
+
+pop_001-0.6
+        pop_001 - Blinding Lights
+        \-> matches: ['catchy_chorus']
+
+pop_002-0.6
+        pop_002 - Bad Romance
+        \-> matches: ['catchy_chorus']
+
+trap_001-0.6
+        trap_001 - Highest in the Room
+        \-> matches: ['catchy_chorus']
+
+trap_002-0.6
+        trap_002 - Mask Off
+        \-> matches: ['catchy_chorus']
+
+trap_003-0.6
+        trap_003 - Bank Account
+        \-> matches: ['catchy_chorus']
+
+reggae_002-0.6
+        reggae_002 - Buffalo Soldier
+        \-> matches: ['catchy_chorus']
+
+rnb_001-0.6
+        rnb_001 - No Scrubs
+        \-> matches: ['catchy_chorus']
+
+rnb_002-0.6
+        rnb_002 - Irreplaceable
+        \-> matches: ['catchy_chorus']
+
+country_001-0.6
+        country_001 - Jolene
+        \-> matches: ['catchy_chorus']
+
+country_002-0.6
+        country_002 - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus']
+
+country_003-0.6
+        country_003 - Friends in Low Places
+        \-> matches: ['catchy_chorus']
+
+trap_future_mask-off-0.6
+        trap_future_mask-off - Mask Off
+        \-> matches: ['catchy_chorus']
+
+metal_judas-prie_painkiller-0.6
+        metal_judas-prie_painkiller - Painkiller
+        \-> matches: ['catchy_chorus']
+
+rock_ac-dc_t-n-t-0.6
+        rock_ac-dc_t-n-t - T.N.T.
+        \-> matches: ['catchy_chorus']
+
+pop_lady-gaga_shallow-0.6
+        pop_lady-gaga_shallow - Shallow
+        \-> matches: ['catchy_chorus']
+
+reggae_bob-marley_one-love-0.6
+        reggae_bob-marley_one-love - One Love
+        \-> matches: ['catchy_chorus']
+
+reggae_inner-circ_bad-boys-0.6
+        reggae_inner-circ_bad-boys - Bad Boys
+        \-> matches: ['catchy_chorus']
+
+rnb_tlc_no-scrubs-with-r-0.6
+        rnb_tlc_no-scrubs-with-r - No Scrubs (With Rap)
+        \-> matches: ['catchy_chorus']
+
+country_john-denve_take-me-home-cou-0.6
+        country_john-denve_take-me-home-cou - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus']
+
+country_dolly-part_jolene-0.6
+        country_dolly-part_jolene - Jolene
+        \-> matches: ['catchy_chorus']
+
+rock_nirvana_smells-like-teen-0.6
+        rock_nirvana_smells-like-teen - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus']
+
+Classified 36 of 46 contents (78.26086956521739%)
+Recommender su pop_rnb.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\pop_rnb.
+txt
+
+Category prototype:
+
+[('catchy_chorus', True), ('smooth_vocals', False)]
+[]
+
+Recommended artworks:
+
+
+rnb_001-1.2
+        rnb_001 - No Scrubs
+        \-> matches: ['catchy_chorus', 'smooth_vocals']
+
+rnb_002-1.2
+        rnb_002 - Irreplaceable
+        \-> matches: ['catchy_chorus', 'smooth_vocals']
+
+rap_002-0.9
+        rap_002 - Juicy
+        \-> matches: ['catchy_chorus']
+
+pop_003-0.9
+        pop_003 - Shape of You
+        \-> matches: ['catchy_chorus']
+
+rnb_003-0.9
+        rnb_003 - The Hills
+        \-> matches: ['catchy_chorus']
+
+rap_001-0.6
+        rap_001 - Lose Yourself
+        \-> matches: ['catchy_chorus']
+
+rap_003-0.6
+        rap_003 - C.R.E.A.M.
+        \-> matches: ['catchy_chorus']
+
+rap_004-0.6
+        rap_004 - Rap God
+        \-> matches: ['catchy_chorus']
+
+metal_001-0.6
+        metal_001 - Master of Puppets
+        \-> matches: ['catchy_chorus']
+
+metal_002-0.6
+        metal_002 - Painkiller
+        \-> matches: ['catchy_chorus']
+
+metal_003-0.6
+        metal_003 - Paranoid
+        \-> matches: ['catchy_chorus']
+
+metal_004-0.6
+        metal_004 - Enter Sandman
+        \-> matches: ['catchy_chorus']
+
+rock_001-0.6
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus']
+
+rock_002-0.6
+        rock_002 - Back in Black
+        \-> matches: ['catchy_chorus']
+
+rock_003-0.6
+        rock_003 - Seven Nation Army
+        \-> matches: ['catchy_chorus']
+
+pop_001-0.6
+        pop_001 - Blinding Lights
+        \-> matches: ['catchy_chorus']
+
+pop_002-0.6
+        pop_002 - Bad Romance
+        \-> matches: ['catchy_chorus']
+
+trap_001-0.6
+        trap_001 - Highest in the Room
+        \-> matches: ['catchy_chorus']
+
+trap_002-0.6
+        trap_002 - Mask Off
+        \-> matches: ['catchy_chorus']
+
+trap_003-0.6
+        trap_003 - Bank Account
+        \-> matches: ['catchy_chorus']
+
+reggae_001-0.6
+        reggae_001 - No Woman No Cry
+        \-> matches: ['catchy_chorus']
+
+reggae_002-0.6
+        reggae_002 - Buffalo Soldier
+        \-> matches: ['catchy_chorus']
+
+reggae_003-0.6
+        reggae_003 - Sweat (A La La La La Long)
+        \-> matches: ['catchy_chorus']
+
+country_001-0.6
+        country_001 - Jolene
+        \-> matches: ['catchy_chorus']
+
+country_002-0.6
+        country_002 - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus']
+
+country_003-0.6
+        country_003 - Friends in Low Places
+        \-> matches: ['catchy_chorus']
+
+trap_future_mask-off-0.6
+        trap_future_mask-off - Mask Off
+        \-> matches: ['catchy_chorus']
+
+metal_judas-prie_painkiller-0.6
+        metal_judas-prie_painkiller - Painkiller
+        \-> matches: ['catchy_chorus']
+
+rock_ac-dc_t-n-t-0.6
+        rock_ac-dc_t-n-t - T.N.T.
+        \-> matches: ['catchy_chorus']
+
+pop_lady-gaga_shallow-0.6
+        pop_lady-gaga_shallow - Shallow
+        \-> matches: ['catchy_chorus']
+
+reggae_bob-marley_one-love-0.6
+        reggae_bob-marley_one-love - One Love
+        \-> matches: ['catchy_chorus']
+
+reggae_inner-circ_bad-boys-0.6
+        reggae_inner-circ_bad-boys - Bad Boys
+        \-> matches: ['catchy_chorus']
+
+rnb_tlc_no-scrubs-with-r-0.6
+        rnb_tlc_no-scrubs-with-r - No Scrubs (With Rap)
+        \-> matches: ['catchy_chorus']
+
+country_john-denve_take-me-home-cou-0.6
+        country_john-denve_take-me-home-cou - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus']
+
+country_dolly-part_jolene-0.6
+        country_dolly-part_jolene - Jolene
+        \-> matches: ['catchy_chorus']
+
+rock_nirvana_smells-like-teen-0.6
+        rock_nirvana_smells-like-teen - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus']
+
+Classified 36 of 46 contents (78.26086956521739%)
+Recommender su pop_rock.txt
+
+Recommendation for category: C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\prototipi_music\pop_rock
+.txt
+
+Category prototype:
+
+[('catchy_chorus', True), ('electric_guitar', False), ('acoustic_drums', False)]
+[]
+
+Recommended artworks:
+
+
+metal_001-1.7999999999999998
+        metal_001 - Master of Puppets
+        \-> matches: ['catchy_chorus', 'electric_guitar', 'acoustic_drums']
+
+metal_002-1.7999999999999998
+        metal_002 - Painkiller
+        \-> matches: ['catchy_chorus', 'electric_guitar', 'acoustic_drums']
+
+metal_003-1.7999999999999998
+        metal_003 - Paranoid
+        \-> matches: ['catchy_chorus', 'electric_guitar', 'acoustic_drums']
+
+metal_004-1.7999999999999998
+        metal_004 - Enter Sandman
+        \-> matches: ['catchy_chorus', 'electric_guitar', 'acoustic_drums']
+
+rock_001-1.7999999999999998
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus', 'electric_guitar', 'acoustic_drums']
+
+rock_002-1.7999999999999998
+        rock_002 - Back in Black
+        \-> matches: ['catchy_chorus', 'electric_guitar', 'acoustic_drums']
+
+rock_003-1.7999999999999998
+        rock_003 - Seven Nation Army
+        \-> matches: ['catchy_chorus', 'electric_guitar', 'acoustic_drums']
+
+rock_004-1.2
+        rock_004 - Come as You Are
+        \-> matches: ['electric_guitar', 'acoustic_drums']
+
+reggae_001-1.2
+        reggae_001 - No Woman No Cry
+        \-> matches: ['catchy_chorus', 'electric_guitar']
+
+rap_002-0.9
+        rap_002 - Juicy
+        \-> matches: ['catchy_chorus']
+
+pop_003-0.9
+        pop_003 - Shape of You
+        \-> matches: ['catchy_chorus']
+
+rnb_003-0.9
+        rnb_003 - The Hills
+        \-> matches: ['catchy_chorus']
+
+rap_001-0.6
+        rap_001 - Lose Yourself
+        \-> matches: ['catchy_chorus']
+
+rap_003-0.6
+        rap_003 - C.R.E.A.M.
+        \-> matches: ['catchy_chorus']
+
+rap_004-0.6
+        rap_004 - Rap God
+        \-> matches: ['catchy_chorus']
+
+pop_001-0.6
+        pop_001 - Blinding Lights
+        \-> matches: ['catchy_chorus']
+
+pop_002-0.6
+        pop_002 - Bad Romance
+        \-> matches: ['catchy_chorus']
+
+trap_001-0.6
+        trap_001 - Highest in the Room
+        \-> matches: ['catchy_chorus']
+
+trap_002-0.6
+        trap_002 - Mask Off
+        \-> matches: ['catchy_chorus']
+
+trap_003-0.6
+        trap_003 - Bank Account
+        \-> matches: ['catchy_chorus']
+
+reggae_002-0.6
+        reggae_002 - Buffalo Soldier
+        \-> matches: ['catchy_chorus']
+
+reggae_003-0.6
+        reggae_003 - Sweat (A La La La La Long)
+        \-> matches: ['catchy_chorus']
+
+rnb_001-0.6
+        rnb_001 - No Scrubs
+        \-> matches: ['catchy_chorus']
+
+rnb_002-0.6
+        rnb_002 - Irreplaceable
+        \-> matches: ['catchy_chorus']
+
+country_001-0.6
+        country_001 - Jolene
+        \-> matches: ['catchy_chorus']
+
+country_002-0.6
+        country_002 - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus']
+
+country_003-0.6
+        country_003 - Friends in Low Places
+        \-> matches: ['catchy_chorus']
+
+trap_future_mask-off-0.6
+        trap_future_mask-off - Mask Off
+        \-> matches: ['catchy_chorus']
+
+metal_judas-prie_painkiller-0.6
+        metal_judas-prie_painkiller - Painkiller
+        \-> matches: ['catchy_chorus']
+
+rock_ac-dc_t-n-t-0.6
+        rock_ac-dc_t-n-t - T.N.T.
+        \-> matches: ['catchy_chorus']
+
+pop_lady-gaga_shallow-0.6
+        pop_lady-gaga_shallow - Shallow
+        \-> matches: ['catchy_chorus']
+
+reggae_bob-marley_one-love-0.6
+        reggae_bob-marley_one-love - One Love
+        \-> matches: ['catchy_chorus']
+
+reggae_inner-circ_bad-boys-0.6
+        reggae_inner-circ_bad-boys - Bad Boys
+        \-> matches: ['catchy_chorus']
+
+rnb_tlc_no-scrubs-with-r-0.6
+        rnb_tlc_no-scrubs-with-r - No Scrubs (With Rap)
+        \-> matches: ['catchy_chorus']
+
+country_john-denve_take-me-home-cou-0.6
+        country_john-denve_take-me-home-cou - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus']
+
+country_dolly-part_jolene-0.6
+        country_dolly-part_jolene - Jolene
+        \-> matches: ['catchy_chorus']
+
+rock_nirvana_smells-like-teen-0.6
+        rock_nirvana_smells-like-teen - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus']
+
+Classified 37 of 46 contents (80.43478260869566%)
+Recommender su pop_trap.txt
+metal_001-0.6
+        metal_001 - Master of Puppets
+        \-> matches: ['catchy_chorus']
+
+metal_002-0.6
+        metal_002 - Painkiller
+        \-> matches: ['catchy_chorus']
+
+metal_003-0.6
+        metal_003 - Paranoid
+        \-> matches: ['catchy_chorus']
+
+metal_004-0.6
+        metal_004 - Enter Sandman
+        \-> matches: ['catchy_chorus']
+
+rock_001-0.6
+        rock_001 - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus']
+
+rock_002-0.6
+        rock_002 - Back in Black
+        \-> matches: ['catchy_chorus']
+
+rock_003-0.6
+        rock_003 - Seven Nation Army
+        \-> matches: ['catchy_chorus']
+
+pop_001-0.6
+        pop_001 - Blinding Lights
+        \-> matches: ['catchy_chorus']
+
+pop_002-0.6
+        pop_002 - Bad Romance
+        \-> matches: ['catchy_chorus']
+
+trap_003-0.6
+        trap_003 - Bank Account
+        \-> matches: ['catchy_chorus']
+
+trap_004-0.6
+        trap_004 - SICKO MODE
+        \-> matches: ['hi_hat_triplets']
+
+reggae_001-0.6
+        reggae_001 - No Woman No Cry
+        \-> matches: ['catchy_chorus']
+
+reggae_002-0.6
+        reggae_002 - Buffalo Soldier
+        \-> matches: ['catchy_chorus']
+
+reggae_003-0.6
+        reggae_003 - Sweat (A La La La La Long)
+        \-> matches: ['catchy_chorus']
+
+rnb_001-0.6
+        rnb_001 - No Scrubs
+        \-> matches: ['catchy_chorus']
+
+rnb_002-0.6
+        rnb_002 - Irreplaceable
+        \-> matches: ['catchy_chorus']
+
+country_001-0.6
+        country_001 - Jolene
+        \-> matches: ['catchy_chorus']
+
+country_002-0.6
+        country_002 - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus']
+
+country_003-0.6
+        country_003 - Friends in Low Places
+        \-> matches: ['catchy_chorus']
+
+trap_future_mask-off-0.6
+        trap_future_mask-off - Mask Off
+        \-> matches: ['catchy_chorus']
+
+metal_judas-prie_painkiller-0.6
+        metal_judas-prie_painkiller - Painkiller
+        \-> matches: ['catchy_chorus']
+
+rock_ac-dc_t-n-t-0.6
+        rock_ac-dc_t-n-t - T.N.T.
+        \-> matches: ['catchy_chorus']
+
+pop_lady-gaga_shallow-0.6
+        pop_lady-gaga_shallow - Shallow
+        \-> matches: ['catchy_chorus']
+
+reggae_bob-marley_one-love-0.6
+        reggae_bob-marley_one-love - One Love
+        \-> matches: ['catchy_chorus']
+
+reggae_inner-circ_bad-boys-0.6
+        reggae_inner-circ_bad-boys - Bad Boys
+        \-> matches: ['catchy_chorus']
+
+rnb_tlc_no-scrubs-with-r-0.6
+        rnb_tlc_no-scrubs-with-r - No Scrubs (With Rap)
+        \-> matches: ['catchy_chorus']
+
+country_john-denve_take-me-home-cou-0.6
+        country_john-denve_take-me-home-cou - Take Me Home, Country Roads
+        \-> matches: ['catchy_chorus']
+
+country_dolly-part_jolene-0.6
+        country_dolly-part_jolene - Jolene
+        \-> matches: ['catchy_chorus']
+
+rock_nirvana_smells-like-teen-0.6
+        rock_nirvana_smells-like-teen - Smells Like Teen Spirit
+        \-> matches: ['catchy_chorus']
+
+Classified 38 of 46 contents (82.6086956521739%)
+Recommender su rap_country.txt
+
+Recommender su rap_metal.txt
+
+Recommender su rap_pop.txt
+
+Recommender su rap_reggae.txt
+
+Recommender su rap_rnb.txt
+
+Recommender su rap_rock.txt
+
+Recommender su rap_trap.txt
+
+Recommender su reggae_country.txt
+
+Recommender su reggae_metal.txt
+
+Recommender su reggae_pop.txt
+
+Recommender su reggae_rap.txt
+
+Recommender su reggae_rnb.txt
+
+Recommender su reggae_rock.txt
+
+Recommender su reggae_trap.txt
+
+Recommender su rnb_country.txt
+
+Recommender su rnb_metal.txt
+
+Recommender su rnb_pop.txt
+
+Recommender su rnb_rap.txt
+
+Recommender su rnb_reggae.txt
+
+Recommender su rnb_rock.txt
+
+Recommender su rnb_trap.txt
+
+Recommender su rock_country.txt
+
+Recommender su rock_metal.txt
+
+Recommender su rock_pop.txt
+
+Recommender su rock_rap.txt
+
+Recommender su rock_reggae.txt
+
+Recommender su rock_rnb.txt
+
+Recommender su rock_trap.txt
+
+Recommender su trap_country.txt
+
+Recommender su trap_metal.txt
+
+Recommender su trap_pop.txt
+
+Recommender su trap_rap.txt
+
+Recommender su trap_reggae.txt
+
+Recommender su trap_rnb.txt
+
+Recommender su trap_rock.txt
+
+
+=== PIPELINE (light) COMPLETATA ===
+PS C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\Classificatore>
+(.venv) finally {
+    Stop-Transcript | Out-Null
+    Write-Host "`nTrascrizione salvata in: $logFile`n"
+}
+>> Errore fatale (): "Termine 'finally' non riconosciuto come nome di cmdlet, funzione, programma eseguibile o file script. Controllare l'ortografia del nome o verificare che il percorso sia incluso e corretto, quindi riprovare."
+Termine 'finally' non riconosciuto come nome di cmdlet, funzione, programma eseguibile o file script. Controllare l'ortografia del nome o verificare che il percorso sia incluso e corretto, quindi riprovare.
+finally : Termine 'finally' non riconosciuto come nome di cmdlet, funzione, programma eseguibile o file script.
+Controllare l'ortografia del nome o verificare che il percorso sia incluso e corretto, quindi riprovare.
+In riga:1 car:1
++ finally {
++ ~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (finally:String) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+PS C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\Classificatore>
+(.venv) # ----------------------------
+PS C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\Classificatore>
+(.venv) # FINE SCRIPT
+PS C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\Classificatore>
+(.venv) # ----------------------------
+PS C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione\Classificatore>

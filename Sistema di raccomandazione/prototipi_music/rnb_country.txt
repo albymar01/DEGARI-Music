@@ -1,0 +1,24 @@
+Title: rnb-country
+
+Head Concept Name: rnb
+Modifier Concept Name: country
+
+head, smooth_vocals
+
+modifier, acoustic_guitar
+modifier, storytelling
+
+T(modifier), twang_vocals, 0.8
+T(modifier), banjo, 0.7
+T(modifier), fiddle, 0.7
+T(modifier), steel_guitar, 0.7
+T(modifier), folk_influence, 0.7
+T(modifier), verse_chorus, 0.75
+
+T(head), love_theme, 0.85
+T(head), slow_jam, 0.8
+T(head), melismatic_vocals, 0.8
+T(head), auto_tune, 0.65
+T(head), romantic_lyrics, 0.8
+T(head), groove_bassline, 0.7
+

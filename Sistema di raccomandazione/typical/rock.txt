@@ -1,0 +1,6 @@
+distorted_guitars: 0.8
+riff: 0.85
+power_chords: 0.8
+verse_chorus_structure: 0.75
+guitar_solo: 0.7
+band_setup: 0.7

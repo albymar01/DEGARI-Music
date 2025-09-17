@@ -1,0 +1,31 @@
+Title: metal-country
+
+Head Concept Name: metal
+Modifier Concept Name: country
+
+head, electric_guitar
+head, acoustic_drums
+
+modifier, acoustic_guitar
+modifier, storytelling
+
+T(modifier), twang_vocals, 0.8
+T(modifier), banjo, 0.7
+T(modifier), fiddle, 0.7
+T(modifier), steel_guitar, 0.7
+T(modifier), folk_influence, 0.7
+T(modifier), verse_chorus, 0.75
+
+T(head), distorted_guitars, 0.9
+T(head), riff, 0.9
+T(head), double_bass, 0.85
+T(head), guitar_solo, 0.8
+T(head), power_chords, 0.75
+T(head), fast_tempos, 0.7
+T(head), growl_or_scream, 0.7
+T(head), palm_muting, 0.65
+T(head), moshpit_energy, 0.6
+
+
+Result: {"twang_vocals": 0.8, "banjo": 0.7, "fiddle": 0.7, "steel_guitar": 0.7, "folk_influence": 0.7, "verse_chorus": 0.75, "distorted_guitars": 0.9, "riff": 0.9, "double_bass": 0.85, "guitar_solo": 0.8, "power_chords": 0.75, "fast_tempos": 0.7, "growl_or_scream": 0.7, "palm_muting": 0.65, "@scenario_probability": 0.7581725096399998}
+Scenario: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0.7581725096399998]

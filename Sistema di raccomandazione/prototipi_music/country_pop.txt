@@ -1,0 +1,27 @@
+Title: country-pop
+
+Head Concept Name: country
+Modifier Concept Name: pop
+
+head, acoustic_guitar
+head, storytelling
+
+modifier, catchy_chorus
+
+T(modifier), synth_hook, 0.85
+T(modifier), danceable_groove, 0.8
+T(modifier), verse_chorus_structure, 0.8
+T(modifier), radio_friendly_length, 0.7
+T(modifier), autotune, 0.65
+T(modifier), clean_vocals, 0.75
+
+T(head), twang_vocals, 0.8
+T(head), banjo, 0.7
+T(head), fiddle, 0.7
+T(head), steel_guitar, 0.7
+T(head), folk_influence, 0.7
+T(head), verse_chorus, 0.75
+
+
+Result: {"synth_hook": 0.85, "danceable_groove": 0.8, "verse_chorus_structure": 0.8, "radio_friendly_length": 0.7, "autotune": 0.65, "clean_vocals": 0.75, "twang_vocals": 0.8, "banjo": 0.7, "fiddle": 0.7, "steel_guitar": 0.7, "verse_chorus": 0.75, "@scenario_probability": 1.14614136}
+Scenario: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1.14614136]

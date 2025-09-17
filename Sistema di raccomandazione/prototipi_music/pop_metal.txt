@@ -1,0 +1,30 @@
+Title: pop-metal
+
+Head Concept Name: pop
+Modifier Concept Name: metal
+
+head, catchy_chorus
+
+modifier, electric_guitar
+modifier, acoustic_drums
+
+T(modifier), distorted_guitars, 0.9
+T(modifier), riff, 0.9
+T(modifier), double_bass, 0.85
+T(modifier), guitar_solo, 0.8
+T(modifier), power_chords, 0.75
+T(modifier), fast_tempos, 0.7
+T(modifier), growl_or_scream, 0.7
+T(modifier), palm_muting, 0.65
+T(modifier), moshpit_energy, 0.6
+
+T(head), synth_hook, 0.85
+T(head), danceable_groove, 0.8
+T(head), verse_chorus_structure, 0.8
+T(head), radio_friendly_length, 0.7
+T(head), autotune, 0.65
+T(head), clean_vocals, 0.75
+
+
+Result: {"distorted_guitars": 0.9, "riff": 0.9, "double_bass": 0.85, "guitar_solo": 0.8, "power_chords": 0.75, "fast_tempos": 0.7, "growl_or_scream": 0.7, "palm_muting": 0.65, "moshpit_energy": 0.6, "synth_hook": 0.85, "danceable_groove": 0.8, "verse_chorus_structure": 0.8, "radio_friendly_length": 0.7, "clean_vocals": 0.75, "@scenario_probability": 0.7891183263599999}
+Scenario: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0.7891183263599999]

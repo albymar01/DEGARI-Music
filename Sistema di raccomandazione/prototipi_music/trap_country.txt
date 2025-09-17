@@ -1,0 +1,28 @@
+Title: trap-country
+
+Head Concept Name: trap
+Modifier Concept Name: country
+
+head, 808
+head, hi_hat_triplets
+head, auto_tune
+
+modifier, acoustic_guitar
+modifier, storytelling
+
+T(modifier), twang_vocals, 0.8
+T(modifier), banjo, 0.7
+T(modifier), fiddle, 0.7
+T(modifier), steel_guitar, 0.7
+T(modifier), folk_influence, 0.7
+T(modifier), verse_chorus, 0.75
+
+T(head), 808, 0.9
+T(head), hi_hat_triplets, 0.85
+T(head), auto_tune, 0.85
+T(head), minimal_beat, 0.75
+T(head), dark_vibe, 0.7
+T(head), flute_loop, 0.7
+T(head), deadpan_flow, 0.65
+T(head), adlibs, 0.65
+

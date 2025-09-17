@@ -1,0 +1,162 @@
+# ----------------------------
+# COLLARE/INCOLLA QUI IN POWERSHELL
+# ----------------------------
+# Attenzione: incollalo tutto in una singola finestra PowerShell con la sessione corrente.
+# ----------------------------
+
+# 0) Impostazioni base
+$ROOT = "C:\Users\Utente\Desktop\DEGARI-Music2.0"
+$LogDir = Join-Path $ROOT "Creazione dei prototipi\data"
+
+# Crea cartella log se non esiste
+if (!(Test-Path $LogDir)) {
+    New-Item -ItemType Directory -Path $LogDir -Force | Out-Null
+}
+
+# File di log con timestamp
+$timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+$logFile = Join-Path $LogDir "pipeline_$timestamp.log"
+
+Write-Host "Log file: $logFile"
+Write-Host "Avvio trascrizione della sessione (Start-Transcript) ..."
+
+# Start recording everything
+Start-Transcript -Path $logFile -Force
+
+Try {
+    # 1) Vai nella radice del progetto
+    Write-Host "`n=== 0) Imposto radice progetto e (eventuale) venv ===`n"
+    Set-Location -LiteralPath $ROOT
+
+    # 2) Politica esecuzione e creazione venv (se manca)
+    Set-ExecutionPolicy -Scope CurrentUser RemoteSigned -Force
+    if (!(Test-Path ".venv")) {
+        Write-Host "Creazione virtualenv .venv..."
+        py -3.12 -m venv ".venv"
+    } else {
+        Write-Host "Virtualenv .venv già presente."
+    }
+
+    # 3) Attiva virtualenv
+    Write-Host "Attivazione virtualenv..."
+    & ".\.venv\Scripts\Activate.ps1"
+
+    # 4) Aggiorna pip e installa dipendenze principali
+    Write-Host "`n=== 1) Aggiorno pip e installo pacchetti Python ===`n"
+    python -m pip install -U pip
+    python -m pip install nltk owlready2 rdflib treetaggerwrapper six lyricsgenius python-slugify unidecode requests beautifulsoup4
+
+    # 5) Scarica risorse NLTK (script temporaneo, PowerShell-friendly)
+    Write-Host "`n=== 2) Scarico risorse NLTK (punkt, punkt_tab) ===`n"
+    $code = @'
+import nltk, contextlib
+for pkg in ("punkt","punkt_tab"):
+    with contextlib.suppress(Exception):
+        nltk.download(pkg, quiet=True)
+print("NLTK data OK")
+'@
+    $tmp = Join-Path $env:TEMP "nltk_dl.py"
+    Set-Content -Path $tmp -Value $code -Encoding UTF8
+    python $tmp
+    Remove-Item $tmp -Force -ErrorAction SilentlyContinue
+
+    # 6) Imposta TREETAGGER_HOME (persistente per l'utente) e per la sessione corrente
+    Write-Host "`n=== 3) Imposto TREETAGGER_HOME ===`n"
+    $TTH = "C:\Users\Utente\Desktop\TreeTagger"
+    [System.Environment]::SetEnvironmentVariable('TREETAGGER_HOME', $TTH, 'User')
+    $env:TREETAGGER_HOME = $TTH
+    Write-Host "TREETAGGER_HOME set to: $env:TREETAGGER_HOME"
+
+    # 7) Patch rapida a treetaggerwrapper per SafeConfigParser -> RawConfigParser (backup automatico)
+    Write-Host "`n=== 4) Applicazione patch rapida a treetaggerwrapper (se necessaria) ===`n"
+    $ttfile = Join-Path $ROOT ".venv\Lib\site-packages\treetaggerwrapper.py"
+    if (Test-Path $ttfile) {
+        $backup = "$ttfile.bak.$timestamp"
+        if (!(Test-Path $backup)) {
+            Copy-Item -Path $ttfile -Destination $backup -Force
+            Write-Host "Backup creato: $backup"
+        }
+        $content = Get-Content -Path $ttfile -Raw
+        if ($content -match "SafeConfigParser") {
+            $new = $content -replace "SafeConfigParser", "RawConfigParser"
+            Set-Content -Path $ttfile -Value $new -Encoding UTF8
+            Write-Host "Patch applicata: SafeConfigParser -> RawConfigParser"
+        } else {
+            Write-Host "Patch non necessaria (già applicata o assente)."
+        }
+    } else {
+        Write-Host "Attenzione: treetaggerwrapper.py non trovato in: $ttfile"
+    }
+
+    # 8) Esegui pipeline STEP-BY-STEP
+    Write-Host "`n=== 5) ESECUZIONE PIPELINE DEGARI ===`n"
+
+    # 5.1) CRAWLER (aggiorna lyrics + metadata nel JSON)
+    Write-Host "`n--- 5.1 CRAWLER (Tools/crawler_lyrics.py) ---`n"
+    Set-Location -LiteralPath (Join-Path $ROOT "Tools")
+    python crawler_lyrics.py
+
+    # 5.2) FEATURES (tag ripetizione/chorus)
+    Write-Host "`n--- 5.2 FEATURES (Tools/lyrics_features.py) ---`n"
+    python lyrics_features.py
+
+    # 5.3) PROTOTYPER (genera file Modulo 1 in "Creazione dei prototipi")
+    Write-Host "`n--- 5.3 PROTOTYPER (Creazione dei prototipi/prototyper.py) ---`n"
+    Set-Location -LiteralPath (Join-Path $ROOT "Creazione dei prototipi")
+    python prototyper.py
+
+    # 5.4) PREPROCESSING (genera coppie head/modifier -> prototipi_music)
+    Write-Host "`n--- 5.4 PREPROCESSING (Sistema di raccomandazione/cocos_preprocessing.py) ---`n"
+    Set-Location -LiteralPath (Join-Path $ROOT "Sistema di raccomandazione")
+    $genres = @("rap","metal","rock","pop","trap","reggae","rnb","country")
+    foreach ($h in $genres) {
+        foreach ($m in $genres) {
+            if ($h -ne $m) {
+                Write-Host "Preprocessing: $h $m"
+                python cocos_preprocessing.py $h $m
+            }
+        }
+    }
+
+    # 5.5) COCOS (esegue il motore su tutti i prototipi generati)
+    Write-Host "`n--- 5.5 COCOS (eseguo cocos.py su prototipi_music/*.txt) ---`n"
+    $protoDir = Join-Path (Get-Location) "prototipi_music"
+    if (Test-Path $protoDir) {
+        Get-ChildItem $protoDir -Filter *.txt | ForEach-Object {
+            $p = Join-Path $protoDir $_.Name
+            Write-Host "Running cocos.py $($_.Name)"
+            python cocos.py $p 14
+        }
+    } else {
+        Write-Host "Attenzione: directory prototipi_music non trovata: $protoDir"
+    }
+
+    # 5.6) RECOMMENDER (solo sui prototipi "validi" che contengono una riga 'result:')
+    Write-Host "`n--- 5.6 RECOMMENDER (Classificatore/Recommender.py sui prototipi validi) ---`n"
+    Set-Location -LiteralPath (Join-Path $ROOT "Sistema di raccomandazione\Classificatore")
+    $protoDir = Join-Path $ROOT "Sistema di raccomandazione\prototipi_music"
+    if (Test-Path $protoDir) {
+        Get-ChildItem $protoDir -Filter *.txt |
+            Where-Object { Select-String -Path $_.FullName -Pattern '^\s*result\s*:' -Quiet } |
+            ForEach-Object {
+                Write-Host "Running Recommender on $($_.Name)"
+                python Recommender.py (Join-Path $protoDir $_.Name)
+            }
+    } else {
+        Write-Host "Attenzione: prototipi_music non trovato: $protoDir"
+    }
+
+    Write-Host "`n=== PIPELINE COMPLETATA ===`n"
+} Catch {
+    Write-Host "`n!!! ERRORE DURANTE L'ESECUZIONE PIPELINE !!!"
+    Write-Host $_.Exception.Message
+    Write-Host $_.Exception.StackTrace
+} Finally {
+    # stop transcript and show location of log
+    Stop-Transcript | Out-Null
+    Write-Host "`nTrascrizione salvata in: $logFile`n"
+}
+
+# ----------------------------
+# FINE SCRIPT
+# ----------------------------

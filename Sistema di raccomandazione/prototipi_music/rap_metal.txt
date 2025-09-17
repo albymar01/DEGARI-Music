@@ -1,0 +1,34 @@
+Title: rap-metal
+
+Head Concept Name: rap
+Modifier Concept Name: metal
+
+head, spoken_or_rap_vocals
+
+modifier, electric_guitar
+modifier, acoustic_drums
+
+T(modifier), distorted_guitars, 0.9
+T(modifier), riff, 0.9
+T(modifier), double_bass, 0.85
+T(modifier), guitar_solo, 0.8
+T(modifier), power_chords, 0.75
+T(modifier), fast_tempos, 0.7
+T(modifier), growl_or_scream, 0.7
+T(modifier), palm_muting, 0.65
+T(modifier), moshpit_energy, 0.6
+
+T(head), flow, 0.9
+T(head), rhyme, 0.9
+T(head), punchline, 0.85
+T(head), storytelling, 0.8
+T(head), wordplay, 0.8
+T(head), boom_bap_drums, 0.75
+T(head), trap_808, 0.7
+T(head), autotune, 0.65
+T(head), battle_attitude, 0.65
+T(head), scratch, 0.6
+
+
+Result: {"distorted_guitars": 0.9, "riff": 0.9, "double_bass": 0.85, "guitar_solo": 0.8, "power_chords": 0.75, "fast_tempos": 0.7, "growl_or_scream": 0.7, "flow": 0.9, "rhyme": 0.9, "punchline": 0.85, "storytelling": 0.8, "wordplay": 0.8, "boom_bap_drums": 0.75, "trap_808": 0.7, "@scenario_probability": 0.03212318602382399}
+Scenario: [1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0.03212318602382399]

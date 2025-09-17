@@ -1,0 +1,27 @@
+Title: rnb-trap
+
+Head Concept Name: rnb
+Modifier Concept Name: trap
+
+head, smooth_vocals
+
+modifier, 808
+modifier, hi_hat_triplets
+modifier, auto_tune
+
+T(modifier), 808, 0.9
+T(modifier), hi_hat_triplets, 0.85
+T(modifier), auto_tune, 0.85
+T(modifier), minimal_beat, 0.75
+T(modifier), dark_vibe, 0.7
+T(modifier), flute_loop, 0.7
+T(modifier), deadpan_flow, 0.65
+T(modifier), adlibs, 0.65
+
+T(head), love_theme, 0.85
+T(head), slow_jam, 0.8
+T(head), melismatic_vocals, 0.8
+T(head), auto_tune, 0.65
+T(head), romantic_lyrics, 0.8
+T(head), groove_bassline, 0.7
+

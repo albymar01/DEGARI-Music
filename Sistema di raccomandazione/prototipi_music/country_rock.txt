@@ -1,0 +1,28 @@
+Title: country-rock
+
+Head Concept Name: country
+Modifier Concept Name: rock
+
+head, acoustic_guitar
+head, storytelling
+
+modifier, electric_guitar
+modifier, acoustic_drums
+
+T(modifier), distorted_guitars, 0.8
+T(modifier), riff, 0.85
+T(modifier), power_chords, 0.8
+T(modifier), verse_chorus_structure, 0.75
+T(modifier), guitar_solo, 0.7
+T(modifier), band_setup, 0.7
+
+T(head), twang_vocals, 0.8
+T(head), banjo, 0.7
+T(head), fiddle, 0.7
+T(head), steel_guitar, 0.7
+T(head), folk_influence, 0.7
+T(head), verse_chorus, 0.75
+
+
+Result: {"distorted_guitars": 0.8, "riff": 0.85, "power_chords": 0.8, "verse_chorus_structure": 0.75, "guitar_solo": 0.7, "band_setup": 0.7, "twang_vocals": 0.8, "banjo": 0.7, "steel_guitar": 0.7, "folk_influence": 0.7, "verse_chorus": 0.75, "@scenario_probability": 1.23430608}
+Scenario: [1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1.23430608]

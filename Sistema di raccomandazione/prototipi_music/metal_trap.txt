@@ -1,0 +1,34 @@
+Title: metal-trap
+
+Head Concept Name: metal
+Modifier Concept Name: trap
+
+head, electric_guitar
+head, acoustic_drums
+
+modifier, 808
+modifier, hi_hat_triplets
+modifier, auto_tune
+
+T(modifier), 808, 0.9
+T(modifier), hi_hat_triplets, 0.85
+T(modifier), auto_tune, 0.85
+T(modifier), minimal_beat, 0.75
+T(modifier), dark_vibe, 0.7
+T(modifier), flute_loop, 0.7
+T(modifier), deadpan_flow, 0.65
+T(modifier), adlibs, 0.65
+
+T(head), distorted_guitars, 0.9
+T(head), riff, 0.9
+T(head), double_bass, 0.85
+T(head), guitar_solo, 0.8
+T(head), power_chords, 0.75
+T(head), fast_tempos, 0.7
+T(head), growl_or_scream, 0.7
+T(head), palm_muting, 0.65
+T(head), moshpit_energy, 0.6
+
+
+Result: {"808": 0.9, "hi_hat_triplets": 0.85, "auto_tune": 0.85, "minimal_beat": 0.75, "dark_vibe": 0.7, "flute_loop": 0.7, "distorted_guitars": 0.9, "riff": 0.9, "double_bass": 0.85, "guitar_solo": 0.8, "power_chords": 0.75, "fast_tempos": 0.7, "growl_or_scream": 0.7, "palm_muting": 0.65, "@scenario_probability": 0.15406302324794063}
+Scenario: [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0.15406302324794063]

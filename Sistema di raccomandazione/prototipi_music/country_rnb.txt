@@ -1,0 +1,27 @@
+Title: country-rnb
+
+Head Concept Name: country
+Modifier Concept Name: rnb
+
+head, acoustic_guitar
+head, storytelling
+
+modifier, smooth_vocals
+
+T(modifier), love_theme, 0.85
+T(modifier), slow_jam, 0.8
+T(modifier), melismatic_vocals, 0.8
+T(modifier), auto_tune, 0.65
+T(modifier), romantic_lyrics, 0.8
+T(modifier), groove_bassline, 0.7
+
+T(head), twang_vocals, 0.8
+T(head), banjo, 0.7
+T(head), fiddle, 0.7
+T(head), steel_guitar, 0.7
+T(head), folk_influence, 0.7
+T(head), verse_chorus, 0.75
+
+
+Result: {"love_theme": 0.85, "slow_jam": 0.8, "melismatic_vocals": 0.8, "auto_tune": 0.65, "romantic_lyrics": 0.8, "groove_bassline": 0.7, "twang_vocals": 0.8, "fiddle": 0.7, "steel_guitar": 0.7, "folk_influence": 0.7, "verse_chorus": 0.75, "@scenario_probability": 1.2225507840000003}
+Scenario: [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1.2225507840000003]

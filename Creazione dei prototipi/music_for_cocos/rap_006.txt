@@ -1,0 +1,17 @@
+humble:               0.9
+kendrick:             0.9
+lamar:                0.9
+damn:                 0.9
+2017:                 0.9
+flow:                 0.9
+hook_repetition:      0.9
+punchline:            0.9
+rap:                  0.9
+confident:            0.9
+intense:              0.9
+spoken_or_rap_vocals: 0.9
+trap_808:             0.9
+hi_hat_triplets:      0.9
+trap:                 0.9
+club:                 0.9
+street:               0.9

@@ -1,0 +1,24 @@
+Title: rnb-rock
+
+Head Concept Name: rnb
+Modifier Concept Name: rock
+
+head, smooth_vocals
+
+modifier, electric_guitar
+modifier, acoustic_drums
+
+T(modifier), distorted_guitars, 0.8
+T(modifier), riff, 0.85
+T(modifier), power_chords, 0.8
+T(modifier), verse_chorus_structure, 0.75
+T(modifier), guitar_solo, 0.7
+T(modifier), band_setup, 0.7
+
+T(head), love_theme, 0.85
+T(head), slow_jam, 0.8
+T(head), melismatic_vocals, 0.8
+T(head), auto_tune, 0.65
+T(head), romantic_lyrics, 0.8
+T(head), groove_bassline, 0.7
+
