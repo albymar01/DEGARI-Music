@@ -40,7 +40,7 @@ desktop.ini
 .env.*
 
 # ------ Output progetto (generati) ------
-# Se NON vuoi versionarli, lascia attive queste righe.
-# Se invece vuoi tenerli in repo, commentale.
 Sistema di raccomandazione/Classificatore/Output/
 Sistema di raccomandazione/prototipi_music/*.txt
+Creazione dei prototipi/music_for_cocos/
+Creazione dei prototipi/data/*.log
