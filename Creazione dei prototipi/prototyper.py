@@ -85,7 +85,7 @@ def writeWordInFile(file, word, value):
 # GLOBAL VARS
 #####################################################
 language = "en"
-TAGDIR = r"C:\Users\Utente\Desktop\TreeTagger"
+TAGDIR = r"C:\Users\sinog\Desktop\TreeTagger"
 
 tagger = treetaggerwrapper.TreeTagger(
     TAGLANG=language,

@@ -1,0 +1,13 @@
+///Portatile
+# vai alla root del progetto
+cd C:\Users\sinog\Desktop\DEGARI-Music
+
+# --- Opzione A: esegui direttamente con l'interprete della venv (NESSUNA attivazione richiesta) ---
+# (usa questo se vuoi evitare di attivare la shell)
+$env:GENIUS_TOKEN = "PUT_YOUR_TOKEN_HERE"   # opzionale: solo se non hai già impostato GENIUS_TOKEN
+& .\.venv\Scripts\python.exe .\Tools\crawler_lyrics.py
+
+# --- Opzione B: attiva la venv e poi esegui (alternativa) ---
+& .\.venv\Scripts\Activate.ps1
+$env:GENIUS_TOKEN = "PUT_YOUR_TOKEN_HERE"   # opzionale: solo se non hai già impostato GENIUS_TOKEN
+python .\Tools\crawler_lyrics.py

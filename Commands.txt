@@ -1,3 +1,5 @@
+PC FISSO
+
 #Module 1
 cd /d "C:\Users\Utente\Desktop\DEGARI-Music2.0\Creazione dei prototipi"
 python prototyper.py
@@ -203,3 +205,213 @@ python Recommender.py ..\prototipi_music\country_pop.txt
 python Recommender.py ..\prototipi_music\country_trap.txt
 python Recommender.py ..\prototipi_music\country_reggae.txt
 python Recommender.py ..\prototipi_music\country_rnb.txt
+
+-----------------------------------------------------------------------------------
+PC PORTATILE
+
+#Module 1
+cd /d "C:\Users\sinog\Desktop\DEGARI-Music\Creazione dei prototipi"
+python prototyper.py
+
+#Module2
+cd /d "C:\Users\sinog\Desktop\DEGARI-Music\Sistema di raccomandazione"
+python cocos_preprocessing.py rap metal
+python cocos_preprocessing.py rap rock
+python cocos_preprocessing.py rap pop
+python cocos_preprocessing.py rap trap
+python cocos_preprocessing.py rap reggae
+python cocos_preprocessing.py rap rnb
+python cocos_preprocessing.py rap country
+
+python cocos_preprocessing.py metal rap
+python cocos_preprocessing.py metal rock
+python cocos_preprocessing.py metal pop
+python cocos_preprocessing.py metal trap
+python cocos_preprocessing.py metal reggae
+python cocos_preprocessing.py metal rnb
+python cocos_preprocessing.py metal country
+
+python cocos_preprocessing.py rock rap
+python cocos_preprocessing.py rock metal
+python cocos_preprocessing.py rock pop
+python cocos_preprocessing.py rock trap
+python cocos_preprocessing.py rock reggae
+python cocos_preprocessing.py rock rnb
+python cocos_preprocessing.py rock country
+
+python cocos_preprocessing.py pop rap
+python cocos_preprocessing.py pop metal
+python cocos_preprocessing.py pop rock
+python cocos_preprocessing.py pop trap
+python cocos_preprocessing.py pop reggae
+python cocos_preprocessing.py pop rnb
+python cocos_preprocessing.py pop country
+
+python cocos_preprocessing.py trap rap
+python cocos_preprocessing.py trap metal
+python cocos_preprocessing.py trap rock
+python cocos_preprocessing.py trap pop
+python cocos_preprocessing.py trap reggae
+python cocos_preprocessing.py trap rnb
+python cocos_preprocessing.py trap country
+
+python cocos_preprocessing.py reggae rap
+python cocos_preprocessing.py reggae metal
+python cocos_preprocessing.py reggae rock
+python cocos_preprocessing.py reggae pop
+python cocos_preprocessing.py reggae trap
+python cocos_preprocessing.py reggae rnb
+python cocos_preprocessing.py reggae country
+
+python cocos_preprocessing.py rnb rap
+python cocos_preprocessing.py rnb metal
+python cocos_preprocessing.py rnb rock
+python cocos_preprocessing.py rnb pop
+python cocos_preprocessing.py rnb trap
+python cocos_preprocessing.py rnb reggae
+python cocos_preprocessing.py rnb country
+
+python cocos_preprocessing.py country rap
+python cocos_preprocessing.py country metal
+python cocos_preprocessing.py country rock
+python cocos_preprocessing.py country pop
+python cocos_preprocessing.py country trap
+python cocos_preprocessing.py country reggae
+python cocos_preprocessing.py country rnb
+
+
+
+#Module 3
+cd /d "C:\Users\sinog\Desktop\DEGARI-Music\Sistema di raccomandazione"
+
+python cocos.py "prototipi_music\rap_metal.txt" 14
+python cocos.py "prototipi_music\rap_rock.txt" 14
+python cocos.py "prototipi_music\rap_pop.txt" 14
+python cocos.py "prototipi_music\rap_trap.txt" 14
+python cocos.py "prototipi_music\rap_reggae.txt" 14
+python cocos.py "prototipi_music\rap_rnb.txt" 14
+python cocos.py "prototipi_music\rap_country.txt" 14
+
+python cocos.py "prototipi_music\metal_rap.txt" 14
+python cocos.py "prototipi_music\metal_rock.txt" 14
+python cocos.py "prototipi_music\metal_pop.txt" 14
+python cocos.py "prototipi_music\metal_trap.txt" 14
+python cocos.py "prototipi_music\metal_reggae.txt" 14
+python cocos.py "prototipi_music\metal_rnb.txt" 14
+python cocos.py "prototipi_music\metal_country.txt" 14
+
+python cocos.py "prototipi_music\rock_rap.txt" 14
+python cocos.py "prototipi_music\rock_metal.txt" 14
+python cocos.py "prototipi_music\rock_pop.txt" 14
+python cocos.py "prototipi_music\rock_trap.txt" 14
+python cocos.py "prototipi_music\rock_reggae.txt" 14
+python cocos.py "prototipi_music\rock_rnb.txt" 14
+python cocos.py "prototipi_music\rock_country.txt" 14
+
+python cocos.py "prototipi_music\pop_rap.txt" 14
+python cocos.py "prototipi_music\pop_metal.txt" 14
+python cocos.py "prototipi_music\pop_rock.txt" 14
+python cocos.py "prototipi_music\pop_trap.txt" 14
+python cocos.py "prototipi_music\pop_reggae.txt" 14
+python cocos.py "prototipi_music\pop_rnb.txt" 14
+python cocos.py "prototipi_music\pop_country.txt" 14
+
+python cocos.py "prototipi_music\trap_rap.txt" 14
+python cocos.py "prototipi_music\trap_metal.txt" 14
+python cocos.py "prototipi_music\trap_rock.txt" 14
+python cocos.py "prototipi_music\trap_pop.txt" 14
+python cocos.py "prototipi_music\trap_reggae.txt" 14
+python cocos.py "prototipi_music\trap_rnb.txt" 14
+python cocos.py "prototipi_music\trap_country.txt" 14
+
+python cocos.py "prototipi_music\reggae_rap.txt" 14
+python cocos.py "prototipi_music\reggae_metal.txt" 14
+python cocos.py "prototipi_music\reggae_rock.txt" 14
+python cocos.py "prototipi_music\reggae_pop.txt" 14
+python cocos.py "prototipi_music\reggae_trap.txt" 14
+python cocos.py "prototipi_music\reggae_rnb.txt" 14
+python cocos.py "prototipi_music\reggae_country.txt" 14
+
+python cocos.py "prototipi_music\rnb_rap.txt" 14
+python cocos.py "prototipi_music\rnb_metal.txt" 14
+python cocos.py "prototipi_music\rnb_rock.txt" 14
+python cocos.py "prototipi_music\rnb_pop.txt" 14
+python cocos.py "prototipi_music\rnb_trap.txt" 14
+python cocos.py "prototipi_music\rnb_reggae.txt" 14
+python cocos.py "prototipi_music\rnb_country.txt" 14
+
+python cocos.py "prototipi_music\country_rap.txt" 14
+python cocos.py "prototipi_music\country_metal.txt" 14
+python cocos.py "prototipi_music\country_rock.txt" 14
+python cocos.py "prototipi_music\country_pop.txt" 14
+python cocos.py "prototipi_music\country_trap.txt" 14
+python cocos.py "prototipi_music\country_reggae.txt" 14
+python cocos.py "prototipi_music\country_rnb.txt" 14
+
+#Module 4
+cd /d "C:\Users\sinog\Desktop\DEGARI-Music\Sistema di raccomandazione\Classificatore"
+
+python Recommender.py ..\prototipi_music\rap_metal.txt
+python Recommender.py ..\prototipi_music\rap_rock.txt
+python Recommender.py ..\prototipi_music\rap_pop.txt
+python Recommender.py ..\prototipi_music\rap_trap.txt
+python Recommender.py ..\prototipi_music\rap_reggae.txt
+python Recommender.py ..\prototipi_music\rap_rnb.txt
+python Recommender.py ..\prototipi_music\rap_country.txt
+
+python Recommender.py ..\prototipi_music\metal_rap.txt
+python Recommender.py ..\prototipi_music\metal_rock.txt
+python Recommender.py ..\prototipi_music\metal_pop.txt
+python Recommender.py ..\prototipi_music\metal_trap.txt
+python Recommender.py ..\prototipi_music\metal_reggae.txt
+python Recommender.py ..\prototipi_music\metal_rnb.txt
+python Recommender.py ..\prototipi_music\metal_country.txt
+
+python Recommender.py ..\prototipi_music\rock_rap.txt
+python Recommender.py ..\prototipi_music\rock_metal.txt
+python Recommender.py ..\prototipi_music\rock_pop.txt
+python Recommender.py ..\prototipi_music\rock_trap.txt
+python Recommender.py ..\prototipi_music\rock_reggae.txt
+python Recommender.py ..\prototipi_music\rock_rnb.txt
+python Recommender.py ..\prototipi_music\rock_country.txt
+
+python Recommender.py ..\prototipi_music\pop_rap.txt
+python Recommender.py ..\prototipi_music\pop_metal.txt
+python Recommender.py ..\prototipi_music\pop_rock.txt
+python Recommender.py ..\prototipi_music\pop_trap.txt
+python Recommender.py ..\prototipi_music\pop_reggae.txt
+python Recommender.py ..\prototipi_music\pop_rnb.txt
+python Recommender.py ..\prototipi_music\pop_country.txt
+
+python Recommender.py ..\prototipi_music\trap_rap.txt
+python Recommender.py ..\prototipi_music\trap_metal.txt
+python Recommender.py ..\prototipi_music\trap_rock.txt
+python Recommender.py ..\prototipi_music\trap_pop.txt
+python Recommender.py ..\prototipi_music\trap_reggae.txt
+python Recommender.py ..\prototipi_music\trap_rnb.txt
+python Recommender.py ..\prototipi_music\trap_country.txt
+
+python Recommender.py ..\prototipi_music\reggae_rap.txt
+python Recommender.py ..\prototipi_music\reggae_metal.txt
+python Recommender.py ..\prototipi_music\reggae_rock.txt
+python Recommender.py ..\prototipi_music\reggae_pop.txt
+python Recommender.py ..\prototipi_music\reggae_trap.txt
+python Recommender.py ..\prototipi_music\reggae_rnb.txt
+python Recommender.py ..\prototipi_music\reggae_country.txt
+
+python Recommender.py ..\prototipi_music\rnb_rap.txt
+python Recommender.py ..\prototipi_music\rnb_metal.txt
+python Recommender.py ..\prototipi_music\rnb_rock.txt
+python Recommender.py ..\prototipi_music\rnb_pop.txt
+python Recommender.py ..\prototipi_music\rnb_trap.txt
+python Recommender.py ..\prototipi_music\rnb_reggae.txt
+python Recommender.py ..\prototipi_music\rnb_country.txt
+
+python Recommender.py ..\prototipi_music\country_rap.txt
+python Recommender.py ..\prototipi_music\country_metal.txt
+python Recommender.py ..\prototipi_music\country_rock.txt
+python Recommender.py ..\prototipi_music\country_pop.txt
+python Recommender.py ..\prototipi_music\country_trap.txt
+python Recommender.py ..\prototipi_music\country_reggae.txt
+python Recommender.py ..\prototipi_music\country_rnb.txt
+

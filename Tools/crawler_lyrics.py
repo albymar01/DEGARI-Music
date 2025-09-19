@@ -5,7 +5,7 @@ from unidecode import unidecode        # pip install unidecode
 from lyricsgenius import Genius        # pip install lyricsgenius
 
 # ========== CONFIG ==========
-JSON_PATH = r"C:\Users\Utente\Desktop\DEGARI-Music2.0\Creazione dei prototipi\descr_music.json"
+JSON_PATH = r"C:\Users\sinog\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music.json"
 TOKEN = os.getenv("GENIUS_TOKEN")
 assert TOKEN, "GENIUS_TOKEN non impostato (usa: setx GENIUS_TOKEN <il_tuo_token> e riapri il terminale)"
 
