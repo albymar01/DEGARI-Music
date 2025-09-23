@@ -1,13 +1,30 @@
 ///Portatile
-# vai alla root del progetto
+# Root del progetto
 cd C:\Users\sinog\Desktop\DEGARI-Music
 
-# --- Opzione A: esegui direttamente con l'interprete della venv (NESSUNA attivazione richiesta) ---
-# (usa questo se vuoi evitare di attivare la shell)
-$env:GENIUS_TOKEN = "PUT_YOUR_TOKEN_HERE"   # opzionale: solo se non hai già impostato GENIUS_TOKEN
-& .\.venv\Scripts\python.exe .\Tools\crawler_lyrics.py
+# Opzione A: SENZA attivare venv (usa l'interprete della venv)
+$env:GENIUS_TOKEN = "INSERISCI_IL_TUO_TOKEN"      # se non già in variabili d'ambiente
+& .\.venv\Scripts\python.exe .\Tools\crawler_lyrics.py `
+  --max-per-artist 3 `
+  --json-path "C:\Users\sinog\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS.json"
 
-# --- Opzione B: attiva la venv e poi esegui (alternativa) ---
+# Opzione B: ATTIVA venv e poi esegui
 & .\.venv\Scripts\Activate.ps1
-$env:GENIUS_TOKEN = "PUT_YOUR_TOKEN_HERE"   # opzionale: solo se non hai già impostato GENIUS_TOKEN
-python .\Tools\crawler_lyrics.py
+$env:GENIUS_TOKEN = "INSERISCI_IL_TUO_TOKEN"
+python .\Tools\crawler_lyrics.py --max-per-artist 3 `
+  --json-path "C:\Users\sinog\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS.json"
+--------------------------------------------------------------------------------------------------------------------------------------------
+///Fisso
+cd C:\Users\Utente\Desktop\DEGARI-Music
+
+# Opzione A: senza attivare
+$env:GENIUS_TOKEN = "INSERISCI_IL_TUO_TOKEN"
+& .\.venv\Scripts\python.exe .\Tools\crawler_lyrics.py `
+  --max-per-artist 3 `
+  --json-path "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS.json"
+
+# Opzione B: attivando venv
+& .\.venv\Scripts\Activate.ps1
+$env:GENIUS_TOKEN = "INSERISCI_IL_TUO_TOKEN"
+python .\Tools\crawler_lyrics.py --max-per-artist 3 `
+  --json-path "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS.json"

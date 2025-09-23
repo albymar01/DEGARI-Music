@@ -1,11 +1,11 @@
 PC FISSO
 
 #Module 1
-cd /d "C:\Users\Utente\Desktop\DEGARI-Music2.0\Creazione dei prototipi"
+cd /d "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi"
 python prototyper.py
 
 #Module2
-cd /d "C:\Users\Utente\Desktop\DEGARI-Music2.0\Sistema di raccomandazione"
+cd /d "C:\Users\Utente\Desktop\DEGARI-Music\Sistema di raccomandazione"
 python cocos_preprocessing.py rap metal
 python cocos_preprocessing.py rap rock
 python cocos_preprocessing.py rap pop
@@ -206,7 +206,7 @@ python Recommender.py ..\prototipi_music\country_trap.txt
 python Recommender.py ..\prototipi_music\country_reggae.txt
 python Recommender.py ..\prototipi_music\country_rnb.txt
 
------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 PC PORTATILE
 
 #Module 1

@@ -1,11 +1,6 @@
-# Config file for DEGARI's prototyper module
-# Here are specified the features of a dataset in order to generate its artworks prototypes
-
-
-# configuration for WikiArt dataset
-
 # name of json description file for input
-jsonDescrFile = "descr_music.json"
+#  -> PUNTA alla CARTELLA "extended" (non al file unico)
+jsonDescrFile = r"C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\extended"
 
 # instance's artwork identifier attribute in json description file
 instanceID = "ID"
@@ -17,6 +12,4 @@ instanceDescr = [
 ]
 
 # output folder path
-outPath = "music_for_cocos/"
-
-
+outPath = r"Creazione dei prototipi\music_for_cocos"

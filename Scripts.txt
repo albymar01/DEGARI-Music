@@ -1,0 +1,136 @@
+******************************************************CMD******************************************************
+Pulizia
+rmdir /s /q "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\music_for_cocos"
+rmdir /s /q "C:\Users\Utente\Desktop\DEGARI-Music\prototipi_music"
+mkdir "C:\Users\Utente\Desktop\DEGARI-Music\prototipi_music"
+---------------------------------------------------------------------------------------------------------------
+Modulo 1
+cd /d "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi"
+python prototyper.py
+---------------------------------------------------------------------------------------------------------------
+Modulo 2
+cd /d "C:\Users\Utente\Desktop\DEGARI-Music\Sistema di raccomandazione"
+set GENRES=rap metal rock pop trap reggae rnb country
+
+for %H in (%GENRES%) do (
+  for %M in (%GENRES%) do (
+    if /I not "%H"=="%M" (
+      python cocos_preprocessing.py %H %M
+    )
+  )
+)
+---------------------------------------------------------------------------------------------------------------
+Modulo 3 
+set BASE=C:\Users\Utente\Desktop\DEGARI-Music
+set GENRES=rap metal rock pop trap reggae rnb country
+
+for %H in (%GENRES%) do (
+  for %M in (%GENRES%) do (
+    if /I not "%H"=="%M" (
+      python "%BASE%\Sistema di raccomandazione\cocos.py" "%BASE%\prototipi_music\%H_%M.txt"
+    )
+  )
+)
+---------------------------------------------------------------------------------------------------------------
+Modulo 4
+set BASE=C:\Users\Utente\Desktop\DEGARI-Music
+set GENRES=rap metal rock pop trap reggae rnb country
+
+for %H in (%GENRES%) do (
+  for %M in (%GENRES%) do (
+    if /I not "%H"=="%M" (
+      python "%BASE%\Sistema di raccomandazione\Classificatore\Recommender.py" "%BASE%\prototipi_music\%H_%M.txt"
+    )
+  )
+)
+---------------------------------------------------------------------------------------------------------------
+Extended (vedi Powershell)
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*********************************POWERSHELL*************************************
+Pulizia
+# CHIUDE TUTTO quello che c'è dentro e poi ricrea la cartella vuota
+Remove-Item -LiteralPath "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\music_for_cocos" -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath "C:\Users\Utente\Desktop\DEGARI-Music\prototipi_music" -Recurse -Force -ErrorAction SilentlyContinue
+
+New-Item -ItemType Directory -Path "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\music_for_cocos" | Out-Null
+New-Item -ItemType Directory -Path "C:\Users\Utente\Desktop\DEGARI-Music\prototipi_music" | Out-Null
+
+Modulo 1
+cd "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi"
+python .\prototyper.py
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Modulo 2
+cd "C:\Users\Utente\Desktop\DEGARI-Music\Sistema di raccomandazione"
+$genres = "rap","metal","rock","pop","trap","reggae","rnb","country"
+foreach ($H in $genres) {
+  foreach ($M in $genres) {
+    if ($H -ne $M) { python .\cocos_preprocessing.py $H $M }
+  }
+}
+-----------------------------------------------------------------------------------------------------------------------------------
+Modulo 3
+$BASE   = "C:\Users\Utente\Desktop\DEGARI-Music"
+$genres = "rap","metal","rock","pop","trap","reggae","rnb","country"
+foreach ($H in $genres) {
+  foreach ($M in $genres) {
+    if ($H -ne $M) {
+      python "$BASE\Sistema di raccomandazione\cocos.py" "$BASE\prototipi_music\$H`_$M.txt"
+    }
+  }
+}
+-----------------------------------------------------------------------------------------------------------------------------------
+Modulo 4
+$BASE   = "C:\Users\Utente\Desktop\DEGARI-Music"
+$genres = "rap","metal","rock","pop","trap","reggae","rnb","country"
+foreach ($H in $genres) {
+  foreach ($M in $genres) {
+    if ($H -ne $M) {
+      python "$BASE\Sistema di raccomandazione\Classificatore\Recommender.py" "$BASE\prototipi_music\$H`_$M.txt"
+    }
+  }
+}
+------------------------------------------------------------------------------------------------------------------------------------
+Lyrics Crawler
+cd /d "C:\Users\Utente\Desktop\DEGARI-Music\Tools"
+python enrich_repetition.py --json-in "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS.json"
+
+//oppure
+
+cd "C:\Users\Utente\Desktop\DEGARI-Music\Tools"
+python .\enrich_repetition.py --json-in "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS.json"
+
+------------------------------------------------------------------------------------------------------------------------------------
+Extended
+
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+
+cd "C:\Users\Utente\Desktop\DEGARI-Music\Tools"
+
+& "C:\Users\Utente\Desktop\DEGARI-Music\.venv\Scripts\Activate.ps1"
+
+& ".\run_extended.ps1" `
+  -InputDir     "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\music_for_cocos" `
+  -TypicalDir   "C:\Users\Utente\Desktop\DEGARI-Music\Sistema di raccomandazione\typical" `
+  -RigidDir     "C:\Users\Utente\Desktop\DEGARI-Music\Sistema di raccomandazione\rigid" `
+  -GeniusJson   "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS.json" `
+  -OutDir       "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\extended" `
+  -FetchMissingLyrics
+
+
