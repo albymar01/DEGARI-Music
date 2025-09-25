@@ -1,6 +1,8 @@
 # name of json description file for input
 #  -> PUNTA alla CARTELLA "extended" (non al file unico)
-jsonDescrFile = r"C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\extended"
+# Sorgente iniziale (file unico GENIUS)
+jsonDescrFile = r"C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS.json"
+
 
 # instance's artwork identifier attribute in json description file
 instanceID = "ID"

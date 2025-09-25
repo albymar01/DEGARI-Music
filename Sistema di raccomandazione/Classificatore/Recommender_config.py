@@ -3,7 +3,7 @@
 
 # --- Input dataset ---
 # JSON with the track descriptions written in English
-jsonDescrFile = r"C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS_old.json"
+jsonDescrFile = r"C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS.json"
 
 # Unique identifier of each track (must match the JSON field name)
 instanceID = "ID"

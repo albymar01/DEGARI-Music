@@ -43,8 +43,6 @@ for %H in (%GENRES%) do (
     )
   )
 )
----------------------------------------------------------------------------------------------------------------
-Extended (vedi Powershell)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -56,27 +54,26 @@ Extended (vedi Powershell)
 
 
 
-
-
-
-
-
-
 *********************************POWERSHELL*************************************
+Token
+$env:GENIUS_TOKEN = "<il_tuo_token>"
+
+[System.Environment]::SetEnvironmentVariable("GENIUS_TOKEN", "<il_tuo_token>", "User")
+
+-----------------------------------------------------------------------------
 Pulizia
-# CHIUDE TUTTO quello che c'è dentro e poi ricrea la cartella vuota
 Remove-Item -LiteralPath "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\music_for_cocos" -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item -LiteralPath "C:\Users\Utente\Desktop\DEGARI-Music\prototipi_music" -Recurse -Force -ErrorAction SilentlyContinue
 
 New-Item -ItemType Directory -Path "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\music_for_cocos" | Out-Null
 New-Item -ItemType Directory -Path "C:\Users\Utente\Desktop\DEGARI-Music\prototipi_music" | Out-Null
 
-Modulo 1
+Modulo 1 (genera i prototipi per brano (pesati 0.6-0.9) dal JSON (unico o \extended)
 cd "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi"
 python .\prototyper.py
 
 -----------------------------------------------------------------------------------------------------------------------------------
-Modulo 2
+Modulo 2 (cocos_preprocessing.py, per ogni coppia Head,Modifier crea il file di input CoCoS con proprietà Rigid/Typical)
 cd "C:\Users\Utente\Desktop\DEGARI-Music\Sistema di raccomandazione"
 $genres = "rap","metal","rock","pop","trap","reggae","rnb","country"
 foreach ($H in $genres) {
@@ -85,7 +82,7 @@ foreach ($H in $genres) {
   }
 }
 -----------------------------------------------------------------------------------------------------------------------------------
-Modulo 3
+Modulo 3 (Combina combina proprietà rispettando vincoli ontologici e sceglie lo scenario migliore (appende Result/Scenario al file))
 $BASE   = "C:\Users\Utente\Desktop\DEGARI-Music"
 $genres = "rap","metal","rock","pop","trap","reggae","rnb","country"
 foreach ($H in $genres) {
@@ -96,8 +93,8 @@ foreach ($H in $genres) {
   }
 }
 -----------------------------------------------------------------------------------------------------------------------------------
-Modulo 4
-$BASE   = "C:\Users\Utente\Desktop\DEGARI-Music"
+Modulo 4 (usa lo scenario (o una lista di parole) per rankare i brani confrontando coi prototipi; salva TSV riassunti)
+"${BASE}\prototipi_music\${H}_${M}.txt"
 $genres = "rap","metal","rock","pop","trap","reggae","rnb","country"
 foreach ($H in $genres) {
   foreach ($M in $genres) {
@@ -107,17 +104,11 @@ foreach ($H in $genres) {
   }
 }
 ------------------------------------------------------------------------------------------------------------------------------------
-Lyrics Crawler
-cd /d "C:\Users\Utente\Desktop\DEGARI-Music\Tools"
-python enrich_repetition.py --json-in "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS.json"
-
-//oppure
-
+**Lyrics Crawler per il JSON**
 cd "C:\Users\Utente\Desktop\DEGARI-Music\Tools"
 python .\enrich_repetition.py --json-in "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS.json"
-
 ------------------------------------------------------------------------------------------------------------------------------------
-Extended
+**Script per cartella Extended**
 
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
 

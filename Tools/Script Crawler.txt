@@ -6,13 +6,13 @@ cd C:\Users\sinog\Desktop\DEGARI-Music
 $env:GENIUS_TOKEN = "INSERISCI_IL_TUO_TOKEN"      # se non già in variabili d'ambiente
 & .\.venv\Scripts\python.exe .\Tools\crawler_lyrics.py `
   --max-per-artist 3 `
-  --json-path "C:\Users\sinog\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS.json"
+  --json-path "C:\Users\sinog\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS_old.json"
 
 # Opzione B: ATTIVA venv e poi esegui
 & .\.venv\Scripts\Activate.ps1
 $env:GENIUS_TOKEN = "INSERISCI_IL_TUO_TOKEN"
 python .\Tools\crawler_lyrics.py --max-per-artist 3 `
-  --json-path "C:\Users\sinog\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS.json"
+  --json-path "C:\Users\sinog\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS_old.json"
 --------------------------------------------------------------------------------------------------------------------------------------------
 ///Fisso
 cd C:\Users\Utente\Desktop\DEGARI-Music
@@ -21,10 +21,10 @@ cd C:\Users\Utente\Desktop\DEGARI-Music
 $env:GENIUS_TOKEN = "INSERISCI_IL_TUO_TOKEN"
 & .\.venv\Scripts\python.exe .\Tools\crawler_lyrics.py `
   --max-per-artist 3 `
-  --json-path "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS.json"
+  --json-path "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS_old.json"
 
 # Opzione B: attivando venv
 & .\.venv\Scripts\Activate.ps1
 $env:GENIUS_TOKEN = "INSERISCI_IL_TUO_TOKEN"
 python .\Tools\crawler_lyrics.py --max-per-artist 3 `
-  --json-path "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS.json"
+  --json-path "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\descr_music_GENIUS_old.json"
