@@ -68,6 +68,8 @@ Remove-Item -LiteralPath "C:\Users\Utente\Desktop\DEGARI-Music\prototipi_music" 
 New-Item -ItemType Directory -Path "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi\music_for_cocos" | Out-Null
 New-Item -ItemType Directory -Path "C:\Users\Utente\Desktop\DEGARI-Music\prototipi_music" | Out-Null
 
+-----------------------------------------------------------------------------
+
 Modulo 1 (genera i prototipi per brano (pesati 0.6-0.9) dal JSON (unico o \extended)
 cd "C:\Users\Utente\Desktop\DEGARI-Music\Creazione dei prototipi"
 python .\prototyper.py
@@ -103,6 +105,13 @@ foreach ($H in $genres) {
     }
   }
 }
+------------------------------------------------------------------------------------------------------------------------------------
+BuildTypicalRigid
+$BASE = "C:\Users\Utente\Desktop\DEGARI-Music"
+python "$BASE\Sistema di raccomandazione\BuildTypicalRigid.py" `
+  --input "$BASE\Creazione dei prototipi\descr_music_GENIUS.json" `
+  --out   "$BASE\Sistema di raccomandazione" `
+  --topk_typical 25 --max_rigid 10
 ------------------------------------------------------------------------------------------------------------------------------------
 **Lyrics Crawler per il JSON**
 cd "C:\Users\Utente\Desktop\DEGARI-Music\Tools"

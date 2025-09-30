@@ -1,0 +1,177 @@
+# BuildTypicalRigid.py — LIGHT defaults (fast CoCoS)
+# - Soglie più alte, pochi typical/rigid per genere
+# - Penalizza globaloni (high_repetition, catchy_chorus, hook_repetition)
+# - Boost per feature distintive (presenti in ≤3 macro-generi)
+# - Ottimizzato per musica US/EN
+
+import argparse, json, re, math
+from collections import defaultdict, Counter
+from pathlib import Path
+
+MACRO_GENRES = ["rap","metal","rock","pop","trap","reggae","rnb","country"]
+
+SUB2MACRO = {
+    "hip_hop":"rap","hiphop":"rap","boom_bap":"rap","boom-bap":"rap","rap":"rap","drill":"rap",
+    "trap":"trap",
+    "rnb":"rnb","r&b":"rnb","contemporary_rnb":"rnb","alternative_rnb":"rnb",
+    "reggae":"reggae","dancehall":"reggae",
+    "metal":"metal","heavy_metal":"metal","nu_metal":"metal",
+    "rock":"rock","alt_rock":"rock","alternative_rock":"rock","punk_rock":"rock",
+    "pop":"pop","synthpop":"pop","dance_pop":"pop","electropop":"pop",
+    "country":"country","classic_country":"country","alt_country":"country"
+}
+
+COMMON_GLOBAL = {"high_repetition","catchy_chorus","hook_repetition"}
+COMMON_PENALTY = 0.40
+DISTINCTIVE_MAX_GENRES = 2
+DISTINCTIVE_BOOST = 1.20
+ALPHA = 0.45
+MIN_W, MAX_W = 0.60, 0.95  # range finale dei pesi typical
+
+TOKEN_RE = re.compile(r"[a-zA-Z']{3,}")
+STOP_EN = {
+  "the","a","an","and","or","but","for","to","of","in","on","at","by","with","from","as",
+  "is","are","was","were","be","been","am","do","does","did","doing",
+  "that","this","these","those","there","here","then","than","so",
+  "i","you","he","she","we","they","it","me","him","her","us","them","my","your","his","her","our","their",
+  "what","which","who","whom","whose","where","when","why","how",
+  "not","no","yes","yeah","yah","yo","uh","oh","nah","hmm",
+  "im","i'm","ive","i've","ill","i'll","id","i'd",
+  "youre","you're","youve","you've","youll","you'll","youd","you'd",
+  "hes","he's","shes","she's","were","we're","weve","we've","well","we'll","wed","we'd",
+  "theyre","they're","theyve","they've","theyll","they'll","theyd","they'd",
+  "its","it's","dont","don't","doesnt","doesn't","didnt","didn't","cant","can't","couldnt","couldn't",
+  "shouldnt","shouldn't","wouldnt","wouldn't","aint","ain't","isnt","isn't","wasnt","wasn't","werent","weren't",
+  "havent","haven't","hasnt","hasn't","hadnt","hadn't","wont","won't","gonna","wanna","gotta","lemme","kinda","sorta","tryna","'cause","cause",
+  "ya","ok","okay","alright","like","just","really","right","way","thing","things","stuff",
+  "get","got","make","makes","made","take","takes","took","put","puts","keep","keeps","kept",
+  "back","out","up","down","over","under","again","still","now","then","ever","never","always","sometimes",
+  "one","two","three","time","times","day","night"
+}
+DOMAIN_WHITELIST = {
+  "hook_repetition","catchy_chorus","high_repetition","flow","wordplay","storytelling","battle",
+  "trap","drill","boom_bap","hip_hop","hiphop","rnb","reggae","metal","rock","pop","country",
+  "skrrt","flex","ice","bando","lean","molly","perc","xan","opps","gang","plug","rollie","guap","racks","bands",
+  "glizzy","draco","blick","blicky","wraith","bentley","lambo","woah","lit","savage","shawty","woke","sauce","drip",
+  "patek","cartier","vvs","chain","chains","whip","808","808s","distorted_guitar","riff","bassline","piano_loop"
+}
+
+def norm_token(t:str)->str: return t.lower().replace("’","'").replace("‘","'").strip("_- ")
+def is_stop_en(t:str)->bool: return (t in STOP_EN) and (t not in DOMAIN_WHITELIST)
+def extract_words(text:str):
+    if not text: return []
+    toks = [norm_token(m.group()) for m in TOKEN_RE.finditer(text)]
+    return [t for t in toks if len(t)>=3 and not is_stop_en(t)]
+
+def choose_macrogenres(entry):
+    out=set()
+    for s in entry.get("subgenres",[]) or []:
+        s2=norm_token(s);  out.add(SUB2MACRO.get(s2,s2))
+    for tg in entry.get("tags",[]) or []:
+        s2=norm_token(tg); out.add(SUB2MACRO.get(s2,s2))
+    blob=(" ".join(str(entry.get(k,"")) for k in ["title","album","artist"])).lower()
+    for k,v in SUB2MACRO.items():
+        if k in blob: out.add(v)
+    return [g for g in out if g in MACRO_GENRES]
+
+def clamp(x,lo=MIN_W,hi=MAX_W): return max(lo,min(hi,x))
+
+def main():
+    base = Path(__file__).resolve().parent
+    default_in = base.parent / "Creazione dei prototipi" / "descr_music_GENIUS.json"
+
+    ap = argparse.ArgumentParser()
+    # DEFAULT “LIGHT”
+    ap.add_argument("--input","-i", default=str(default_in))
+    ap.add_argument("--out","-o",   default=str(base))
+    ap.add_argument("--typical_thr_tags",  type=float, default=0.60)
+    ap.add_argument("--rigid_thr_tags",    type=float, default=0.95)
+    ap.add_argument("--typical_thr_words", type=float, default=0.60)
+    ap.add_argument("--rigid_thr_words",   type=float, default=0.95)
+    ap.add_argument("--min_df_words", type=int, default=3)
+    ap.add_argument("--topk_typical", type=int, default=12)
+    ap.add_argument("--max_rigid",    type=int, default=5)
+    args = ap.parse_args()
+
+    out_dir = Path(args.out)
+    typ_dir = out_dir/"typical"; typ_dir.mkdir(parents=True, exist_ok=True)
+    rig_dir = out_dir/"rigid";   rig_dir.mkdir(parents=True, exist_ok=True)
+
+    data = json.load(open(args.input,"r",encoding="utf-8"))
+    if isinstance(data, dict) and "tracks" in data: data = data["tracks"]
+
+    songs_by_genre = defaultdict(list)
+    for e in data:
+        for g in choose_macrogenres(e):
+            songs_by_genre[g].append(e)
+
+    tag_df_by_g = {g: Counter() for g in MACRO_GENRES}
+    word_df_by_g= {g: Counter() for g in MACRO_GENRES}
+    n_docs_g    = {g: len(songs_by_genre[g]) for g in MACRO_GENRES}
+
+    for g,songs in songs_by_genre.items():
+        for e in songs:
+            tags  = set(norm_token(t) for t in (e.get("tags") or []))
+            words = set(extract_words(e.get("lyrics","")))
+            tag_df_by_g[g].update(tags)
+            word_df_by_g[g].update(words)
+
+    global_genre_count = Counter()
+    for g in MACRO_GENRES:
+        props = set(tag_df_by_g[g]) | set(word_df_by_g[g])
+        for p in props: global_genre_count[p] += 1
+
+    def idf_prop(p:str)->float:
+        gcount = global_genre_count.get(p,0)
+        return math.log(1 + (1 + gcount))
+
+    for g in MACRO_GENRES:
+        if n_docs_g[g] == 0:
+            (typ_dir/f"{g}.txt").write_text("", encoding="utf-8")
+            (rig_dir/f"{g}.txt").write_text("", encoding="utf-8")
+            continue
+
+        frac_tag  = {t: tag_df_by_g[g][t]/n_docs_g[g] for t in tag_df_by_g[g]}
+        frac_word = {w: word_df_by_g[g][w]/n_docs_g[g]
+                     for w in word_df_by_g[g] if word_df_by_g[g][w] >= args.min_df_words}
+
+        typical_tags_raw  = {t:v for t,v in frac_tag.items()  if v >= args.typical_thr_tags}
+        typical_words_raw = {w:v for w,v in frac_word.items() if v >= args.typical_thr_words and not (w in COMMON_GLOBAL and w not in DOMAIN_WHITELIST)}
+
+        scores = Counter()
+        for t,v in typical_tags_raw.items():
+            w = ALPHA*v + (1-ALPHA)*(v / idf_prop(t))
+            scores[t] += w
+        for w_,v in typical_words_raw.items():
+            w = (ALPHA*v + (1-ALPHA)*(v / idf_prop(w_))) * 0.8
+            scores[w_] += w
+
+        for p in list(scores.keys()):
+            s = scores[p]
+            if p in COMMON_GLOBAL: s *= COMMON_PENALTY
+            if global_genre_count.get(p,99) <= DISTINCTIVE_MAX_GENRES: s *= DISTINCTIVE_BOOST
+            scores[p] = s
+
+        top_items = dict(scores.most_common(args.topk_typical))
+        if top_items:
+            mn, mx = min(top_items.values()), max(top_items.values())
+            for p,v in list(top_items.items()):
+                if mx == mn: w = 0.80
+                else:        w = MIN_W + (v - mn) / (mx - mn) * (MAX_W - MIN_W)
+                top_items[p] = clamp(round(w,3))
+
+        rigid = []
+        rigid += [t for t,v in frac_tag.items()  if v >= args.rigid_thr_tags]
+        rigid += [w for w,v in frac_word.items() if v >= args.rigid_thr_words and w in DOMAIN_WHITELIST]
+        rigid = list(dict.fromkeys(rigid))[:args.max_rigid]
+
+        with open(typ_dir/f"{g}.txt","w",encoding="utf-8") as f:
+            for k,v in sorted(top_items.items(), key=lambda kv:(-kv[1],kv[0])):
+                f.write(f"{k}: {v}\n")
+        with open(rig_dir/f"{g}.txt","w",encoding="utf-8") as f:
+            for k in rigid: f.write(f"{k}\n")
+
+    print("Done. Generated typical/ and rigid/ from", Path(args.input).name)
+
+if __name__ == "__main__":
+    main()

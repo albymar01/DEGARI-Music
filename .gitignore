@@ -36,6 +36,7 @@ desktop.ini
 
 # ------ Vari segreti ------
 .env
+.venv
 *.env
 .env.*
 
