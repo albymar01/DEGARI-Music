@@ -1,0 +1,93 @@
+# === Impostazioni iniziali ====================================================
+$BASE  = "C:\Users\Utente\Desktop\DEGARI-Music"
+$SYS   = "$BASE\Sistema di raccomandazione"
+$PROTO = "$BASE\Creazione dei prototipi"
+$TOOLS = "$BASE\Tools"
+$genres = "rap","metal","rock","pop","trap","reggae","rnb","country"
+-----------------------------------------------------------------------------------------------
+#Token Genius
+$env:GENIUS_TOKEN = "xxxxxxxxxxxxxxxx"
+[System.Environment]::SetEnvironmentVariable("GENIUS_TOKEN", $env:GENIUS_TOKEN, "User")
+-----------------------------------------------------------------------------------------------
+# === Pulizia ===========================================================
+Remove-Item -LiteralPath "$PROTO\music_for_cocos" -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath "$BASE\prototipi_music"  -Recurse -Force -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Path "$PROTO\music_for_cocos" | Out-Null
+New-Item -ItemType Directory -Path "$BASE\prototipi_music"  | Out-Null
+-----------------------------------------------------------------------------------------------
+# === Modulo 1: Prototyper (per-brano) ========================================
+Set-Location $PROTO
+python .\prototyper.py
+-----------------------------------------------------------------------------------------------
+# === Modulo 2: BuildTypicalRigid (per-genere) =================================
+Set-Location $SYS
+python .\BuildTypicalRigid.py `
+  --input "$PROTO\descr_music_GENIUS.json" `
+  --out   "$SYS" `
+  --typical_thr_tags 0.80 --rigid_thr_tags 0.98 `
+  --typical_thr_words 0.80 --rigid_thr_words 0.98 `
+  --min_df_words 8 `
+  --topk_typical 6 `
+  --max_rigid 2
+-----------------------------------------------------------------------------------------------
+# === Modulo 3a: Preprocessing CoCoS (Head, Modifier) =========================
+Set-Location $SYS
+foreach ($H in $genres) {
+  foreach ($M in $genres) {
+    if ($H -ne $M) {
+      python .\cocos_preprocessing.py $H $M
+    }
+  }
+}
+-----------------------------------------------------------------------------------------------
+# === Modulo 3b: CoCoS (mixing + scenari) ====================================
+$SCJSON = "$BASE\prototipi_music\scenarios_json"
+New-Item -ItemType Directory -Path $SCJSON -ErrorAction SilentlyContinue | Out-Null
+$env:PYTHONUNBUFFERED = "1"
+foreach ($H in $genres) {
+  foreach ($M in $genres) {
+    if ($H -ne $M) {
+      python .\cocos.py "$BASE\prototipi_music\$H`_$M.txt" 3 -o "$SCJSON"
+    }
+  }
+}
+-----------------------------------------------------------------------------------------------
+# === Modulo 4: Recommender (salva JSON, stampa solo riassunto) ===============
+$OUTREC = "$BASE\prototipi_music\recommender_out"
+New-Item -ItemType Directory -Path $OUTREC -ErrorAction SilentlyContinue | Out-Null
+
+foreach ($H in $genres) {
+  foreach ($M in $genres) {
+    if ($H -ne $M) {
+      $pair = "${H}_${M}"
+      $infile = "$BASE\prototipi_music\$pair.txt"
+
+      # Esegue il Recommender aggiornato: salverà automaticamente un file JSON
+      python "$SYS\Classificatore\Recommender.py" $infile
+
+      # Sposta il JSON generato in una cartella ordinata
+      $jsonfile = "$BASE\prototipi_music\${pair}_recommendations.json"
+      if (Test-Path $jsonfile) {
+        Move-Item $jsonfile "$OUTREC\" -Force
+      }
+    }
+  }
+}
+
+Write-Host "Modulo 4 COMPLETATO. Risultati in $OUTREC"
+-------------------------------------------------------------------------------------------------
+#mixing aggressivo
+$BR = "$SYS\BuildTypicalRigid.py"
+Copy-Item $BR "$BR.expA.bak" -Force
+(Get-Content $BR) `
+  -replace 'COMMON_PENALTY\s*=\s*[0-9.]+','COMMON_PENALTY = 0.25' `
+  -replace 'DISTINCTIVE_BOOST\s*=\s*[0-9.]+','DISTINCTIVE_BOOST = 1.05' `
+  -replace 'DISTINCTIVE_MAX_GENRES\s*=\s*\d+','DISTINCTIVE_MAX_GENRES = 1' `
+  | Set-Content $BR
+---------------------------------------------------------------------------------------------------
+#mixing conservativo
+(Get-Content $BR) `
+  -replace 'COMMON_PENALTY\s*=\s*[0-9.]+','COMMON_PENALTY = 0.40' `
+  -replace 'DISTINCTIVE_BOOST\s*=\s*[0-9.]+','DISTINCTIVE_BOOST = 1.20' `
+  -replace 'DISTINCTIVE_MAX_GENRES\s*=\s*\d+','DISTINCTIVE_MAX_GENRES = 2' `
+  | Set-Content $BR

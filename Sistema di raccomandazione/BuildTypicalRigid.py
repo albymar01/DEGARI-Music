@@ -30,7 +30,7 @@ MIN_W, MAX_W = 0.60, 0.95  # range finale dei pesi typical
 
 TOKEN_RE = re.compile(r"[a-zA-Z']{3,}")
 STOP_EN = {
-  "the","a","an","and","or","but","for","to","of","in","on","at","by","with","from","as",
+  "the","all","a","an","and","or","but","for","to","of","in","on","at","by","with","from","as",
   "is","are","was","were","be","been","am","do","does","did","doing",
   "that","this","these","those","there","here","then","than","so",
   "i","you","he","she","we","they","it","me","him","her","us","them","my","your","his","her","our","their",
@@ -82,15 +82,31 @@ def main():
 
     ap = argparse.ArgumentParser()
     # DEFAULT “LIGHT”
+    #ap.add_argument("--input","-i", default=str(default_in))
+    #ap.add_argument("--out","-o",   default=str(base))
+    #ap.add_argument("--typical_thr_tags",  type=float, default=0.60)
+    #ap.add_argument("--rigid_thr_tags",    type=float, default=0.95)
+    #ap.add_argument("--typical_thr_words", type=float, default=0.60)
+    #ap.add_argument("--rigid_thr_words",   type=float, default=0.95)
+    #ap.add_argument("--min_df_words", type=int, default=3)
+    #ap.add_argument("--topk_typical", type=int, default=12)
+    #ap.add_argument("--max_rigid",    type=int, default=5)
+    #args = ap.parse_args()
+
+    # DEFAULT “STRICT”  ###
     ap.add_argument("--input","-i", default=str(default_in))
     ap.add_argument("--out","-o",   default=str(base))
-    ap.add_argument("--typical_thr_tags",  type=float, default=0.60)
-    ap.add_argument("--rigid_thr_tags",    type=float, default=0.95)
-    ap.add_argument("--typical_thr_words", type=float, default=0.60)
-    ap.add_argument("--rigid_thr_words",   type=float, default=0.95)
-    ap.add_argument("--min_df_words", type=int, default=3)
-    ap.add_argument("--topk_typical", type=int, default=12)
-    ap.add_argument("--max_rigid",    type=int, default=5)
+    # soglie alte: solo tag/parole davvero stabili entrano nei typical
+    ap.add_argument("--typical_thr_tags",  type=float, default=0.85)   ### era 0.60
+    ap.add_argument("--rigid_thr_tags",    type=float, default=0.98)   ### era 0.95
+    ap.add_argument("--typical_thr_words", type=float, default=0.85)   ### era 0.60
+    ap.add_argument("--rigid_thr_words",   type=float, default=0.98)   ### era 0.95
+    # frequenza minima più alta → scarta parole rare
+    ap.add_argument("--min_df_words", type=int, default=10)            ### era 3
+    # meno typical e rigid ammessi
+    ap.add_argument("--topk_typical", type=int, default=5)             ### era 12
+    ap.add_argument("--max_rigid",    type=int, default=3)             ### era 5
+
     args = ap.parse_args()
 
     out_dir = Path(args.out)
