@@ -39,6 +39,11 @@ desktop.ini
 .venv
 *.env
 .env.*
+# Evita di aggiungere file binari e ambienti
+*.pyc
+__pycache__/
+.venv/
+
 
 # ------ Output progetto (generati) ------
 Sistema di raccomandazione/Classificatore/Output/

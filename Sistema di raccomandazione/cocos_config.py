@@ -17,5 +17,5 @@ RIGID_PROP_DIR = str(BASE / "rigid")
 COCOS_DIR = r"C:\Users\Utente\Desktop\DEGARI-Music\prototipi_music"
 
 # max number of typical properties in the combined concept
-# (se vuoi replicare la 2.0 metti 14)
+# max 14
 MAX_ATTRS = 2

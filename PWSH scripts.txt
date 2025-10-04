@@ -6,7 +6,7 @@ $TOOLS = "$BASE\Tools"
 $genres = "rap","metal","rock","pop","trap","reggae","rnb","country"
 -----------------------------------------------------------------------------------------------
 #Token Genius
-$env:GENIUS_TOKEN = "xxxxxxxxxxxxxxxx"
+$env:GENIUS_TOKEN = "HsZh8cE3TcOP51HBygFCIG2K6tLYPmA5PWWutK2I6oRSIf0U8vCXWp2p8_RaHUtB"
 [System.Environment]::SetEnvironmentVariable("GENIUS_TOKEN", $env:GENIUS_TOKEN, "User")
 -----------------------------------------------------------------------------------------------
 # === Pulizia ===========================================================
