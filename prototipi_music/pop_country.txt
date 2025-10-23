@@ -1,0 +1,23 @@
+Title: pop-country
+
+Head Concept Name: pop
+Modifier Concept Name: country
+
+head, hook_repetition
+head, high_repetition
+
+modifier, country
+modifier, high_repetition
+
+T(modifier), country, 0.95
+T(modifier), high_repetition, 0.62
+T(modifier), hook_repetition, 0.6
+
+T(head), pop, 0.95
+T(head), high_repetition, 0.629
+T(head), hook_repetition, 0.629
+T(head), catchy_chorus, 0.6
+
+
+Result: {"country": 0.95, "pop": 0.95, "hook_repetition": 0.629, "@scenario_probability": 1.2804875048, "@scenario_score": 1.2804875048}
+Scenario: [1, 0, 0, 1, 0, 1, 0, 1.2804875048]

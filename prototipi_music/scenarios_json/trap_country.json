@@ -1,0 +1,13 @@
+{
+  "head": "trap",
+  "modifier": "country",
+  "recommended_scenarios": [
+    {
+      "country": 0.95,
+      "trap": 0.95,
+      "high_repetition": 0.62,
+      "@scenario_probability": 8.952800000000002,
+      "@scenario_score": 8.952800000000002
+    }
+  ]
+}

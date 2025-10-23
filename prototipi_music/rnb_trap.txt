@@ -1,0 +1,20 @@
+Title: rnb-trap
+
+Head Concept Name: rnb
+Modifier Concept Name: trap
+
+head, high_repetition
+head, rnb
+
+modifier, high_repetition
+modifier, trap
+
+T(modifier), trap, 0.95
+T(modifier), high_repetition, 0.6
+
+T(head), rnb, 0.95
+T(head), high_repetition, 0.6
+
+
+Result: {"rnb": 0.95, "trap": 0.95, "high_repetition": 0.6, "@scenario_probability": 21.66, "@scenario_score": 21.66}
+Scenario: [1, 1, 1, 0, 21.66]

@@ -1,0 +1,23 @@
+Title: country-reggae
+
+Head Concept Name: country
+Modifier Concept Name: reggae
+
+head, country
+head, high_repetition
+
+modifier, hook_repetition
+modifier, high_repetition
+
+T(modifier), reggae, 0.95
+T(modifier), catchy_chorus, 0.6
+T(modifier), high_repetition, 0.6
+T(modifier), hook_repetition, 0.6
+
+T(head), country, 0.95
+T(head), high_repetition, 0.62
+T(head), hook_repetition, 0.6
+
+
+Result: {"country": 0.95, "reggae": 0.95, "high_repetition": 0.62, "@scenario_probability": 1.4324480000000002, "@scenario_score": 1.4324480000000002}
+Scenario: [1, 0, 0, 0, 1, 1, 0, 1.4324480000000002]

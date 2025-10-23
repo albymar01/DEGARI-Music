@@ -1,0 +1,20 @@
+Title: reggae-rap
+
+Head Concept Name: reggae
+Modifier Concept Name: rap
+
+head, hook_repetition
+head, high_repetition
+
+modifier, high_repetition
+
+T(modifier), high_repetition, 0.8
+
+T(head), reggae, 0.95
+T(head), catchy_chorus, 0.6
+T(head), high_repetition, 0.6
+T(head), hook_repetition, 0.6
+
+
+Result: {"reggae": 0.95, "high_repetition": 0.8, "hook_repetition": 0.6, "@scenario_probability": 7.296000000000001, "@scenario_score": 7.296000000000001}
+Scenario: [1, 1, 0, 0, 1, 7.296000000000001]

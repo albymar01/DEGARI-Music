@@ -1,0 +1,13 @@
+{
+  "head": "trap",
+  "modifier": "pop",
+  "recommended_scenarios": [
+    {
+      "pop": 0.95,
+      "trap": 0.95,
+      "high_repetition": 0.629,
+      "@scenario_probability": 3.3697039600000007,
+      "@scenario_score": 3.3697039600000007
+    }
+  ]
+}

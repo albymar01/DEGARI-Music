@@ -1,0 +1,12 @@
+{
+  "head": "rnb",
+  "modifier": "rap",
+  "recommended_scenarios": [
+    {
+      "rnb": 0.95,
+      "high_repetition": 0.8,
+      "@scenario_probability": 30.400000000000002,
+      "@scenario_score": 30.400000000000002
+    }
+  ]
+}

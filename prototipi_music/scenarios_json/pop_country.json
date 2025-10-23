@@ -1,0 +1,20 @@
+{
+  "head": "pop",
+  "modifier": "country",
+  "recommended_scenarios": [
+    {
+      "country": 0.95,
+      "pop": 0.95,
+      "hook_repetition": 0.629,
+      "@scenario_probability": 1.2804875048,
+      "@scenario_score": 1.2804875048
+    },
+    {
+      "country": 0.95,
+      "pop": 0.95,
+      "high_repetition": 0.629,
+      "@scenario_probability": 1.2804875048,
+      "@scenario_score": 1.2804875048
+    }
+  ]
+}

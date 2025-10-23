@@ -1,0 +1,22 @@
+Title: pop-rnb
+
+Head Concept Name: pop
+Modifier Concept Name: rnb
+
+head, hook_repetition
+head, high_repetition
+
+modifier, high_repetition
+modifier, rnb
+
+T(modifier), rnb, 0.95
+T(modifier), high_repetition, 0.6
+
+T(head), pop, 0.95
+T(head), high_repetition, 0.629
+T(head), hook_repetition, 0.629
+T(head), catchy_chorus, 0.6
+
+
+Result: {"pop": 0.95, "rnb": 0.95, "hook_repetition": 0.629, "@scenario_probability": 3.3697039600000007, "@scenario_score": 3.3697039600000007}
+Scenario: [1, 0, 1, 0, 1, 0, 3.3697039600000007]

@@ -1,0 +1,24 @@
+Title: metal-rock
+
+Head Concept Name: metal
+Modifier Concept Name: rock
+
+head, high_repetition
+head, metal
+
+modifier, hook_repetition
+modifier, high_repetition
+
+T(modifier), rock, 0.95
+T(modifier), catchy_chorus, 0.6
+T(modifier), high_repetition, 0.6
+T(modifier), hook_repetition, 0.6
+
+T(head), metal, 0.95
+T(head), high_repetition, 0.618
+T(head), catchy_chorus, 0.6
+T(head), hook_repetition, 0.6
+
+
+Result: {"metal": 0.95, "rock": 0.95, "high_repetition": 0.618, "@scenario_probability": 0.5711308800000001, "@scenario_score": 0.5711308800000001}
+Scenario: [1, 0, 0, 0, 1, 1, 0, 0, 0.5711308800000001]

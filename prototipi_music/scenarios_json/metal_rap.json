@@ -1,0 +1,12 @@
+{
+  "head": "metal",
+  "modifier": "rap",
+  "recommended_scenarios": [
+    {
+      "metal": 0.95,
+      "high_repetition": 0.618,
+      "@scenario_probability": 7.51488,
+      "@scenario_score": 7.51488
+    }
+  ]
+}

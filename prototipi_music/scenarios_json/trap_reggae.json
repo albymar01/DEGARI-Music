@@ -1,0 +1,27 @@
+{
+  "head": "trap",
+  "modifier": "reggae",
+  "recommended_scenarios": [
+    {
+      "reggae": 0.95,
+      "trap": 0.95,
+      "hook_repetition": 0.6,
+      "@scenario_probability": 3.4656000000000002,
+      "@scenario_score": 3.4656000000000002
+    },
+    {
+      "reggae": 0.95,
+      "trap": 0.95,
+      "high_repetition": 0.6,
+      "@scenario_probability": 3.4656000000000002,
+      "@scenario_score": 3.4656000000000002
+    },
+    {
+      "reggae": 0.95,
+      "trap": 0.95,
+      "catchy_chorus": 0.6,
+      "@scenario_probability": 3.4656000000000002,
+      "@scenario_score": 3.4656000000000002
+    }
+  ]
+}

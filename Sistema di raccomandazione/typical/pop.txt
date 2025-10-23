@@ -1,6 +1,4 @@
-synth_hook: 0.85
-danceable_groove: 0.8
-verse_chorus_structure: 0.8
-radio_friendly_length: 0.7
-autotune: 0.65
-clean_vocals: 0.75
+pop: 0.95
+high_repetition: 0.629
+hook_repetition: 0.629
+catchy_chorus: 0.6

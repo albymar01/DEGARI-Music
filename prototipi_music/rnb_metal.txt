@@ -1,0 +1,22 @@
+Title: rnb-metal
+
+Head Concept Name: rnb
+Modifier Concept Name: metal
+
+head, high_repetition
+head, rnb
+
+modifier, high_repetition
+modifier, metal
+
+T(modifier), metal, 0.95
+T(modifier), high_repetition, 0.618
+T(modifier), catchy_chorus, 0.6
+T(modifier), hook_repetition, 0.6
+
+T(head), rnb, 0.95
+T(head), high_repetition, 0.6
+
+
+Result: {"metal": 0.95, "rnb": 0.95, "high_repetition": 0.618, "@scenario_probability": 3.5695680000000003, "@scenario_score": 3.5695680000000003}
+Scenario: [1, 1, 0, 0, 1, 0, 3.5695680000000003]

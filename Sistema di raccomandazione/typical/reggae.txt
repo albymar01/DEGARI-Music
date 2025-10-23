@@ -1,6 +1,4 @@
-dub_echo: 0.8
-laid_back: 0.75
-one_drop_drum: 0.7
-jamaican_patois: 0.7
-storytelling: 0.7
-roots_vibe: 0.8
+reggae: 0.95
+catchy_chorus: 0.6
+high_repetition: 0.6
+hook_repetition: 0.6

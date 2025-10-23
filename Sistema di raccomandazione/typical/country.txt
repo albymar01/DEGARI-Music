@@ -1,6 +1,3 @@
-twang_vocals: 0.8
-banjo: 0.7
-fiddle: 0.7
-steel_guitar: 0.7
-folk_influence: 0.7
-verse_chorus: 0.75
+country: 0.95
+high_repetition: 0.62
+hook_repetition: 0.6

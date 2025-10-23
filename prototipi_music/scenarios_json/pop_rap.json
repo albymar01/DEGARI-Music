@@ -1,0 +1,19 @@
+{
+  "head": "pop",
+  "modifier": "rap",
+  "recommended_scenarios": [
+    {
+      "pop": 0.95,
+      "high_repetition": 0.8,
+      "hook_repetition": 0.629,
+      "@scenario_probability": 7.0941136,
+      "@scenario_score": 7.0941136
+    },
+    {
+      "pop": 0.95,
+      "high_repetition": 0.629,
+      "@scenario_probability": 7.0941136,
+      "@scenario_score": 7.0941136
+    }
+  ]
+}

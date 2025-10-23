@@ -1,2 +1,2 @@
-offbeat_rhythm
-bassline
+hook_repetition
+high_repetition

@@ -1,3 +1,2 @@
-808
-hi_hat_triplets
-auto_tune
+high_repetition
+trap

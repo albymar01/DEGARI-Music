@@ -1,0 +1,18 @@
+Title: trap-rap
+
+Head Concept Name: trap
+Modifier Concept Name: rap
+
+head, high_repetition
+head, trap
+
+modifier, high_repetition
+
+T(modifier), high_repetition, 0.8
+
+T(head), trap, 0.95
+T(head), high_repetition, 0.6
+
+
+Result: {"trap": 0.95, "high_repetition": 0.8, "@scenario_probability": 30.400000000000002, "@scenario_score": 30.400000000000002}
+Scenario: [1, 1, 0, 30.400000000000002]

@@ -1,0 +1,20 @@
+{
+  "head": "pop",
+  "modifier": "metal",
+  "recommended_scenarios": [
+    {
+      "metal": 0.95,
+      "pop": 0.95,
+      "hook_repetition": 0.629,
+      "@scenario_probability": 0.514890765088,
+      "@scenario_score": 0.514890765088
+    },
+    {
+      "metal": 0.95,
+      "pop": 0.95,
+      "high_repetition": 0.629,
+      "@scenario_probability": 0.514890765088,
+      "@scenario_score": 0.514890765088
+    }
+  ]
+}

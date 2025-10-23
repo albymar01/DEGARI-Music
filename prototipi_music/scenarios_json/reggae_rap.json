@@ -1,0 +1,27 @@
+{
+  "head": "reggae",
+  "modifier": "rap",
+  "recommended_scenarios": [
+    {
+      "reggae": 0.95,
+      "high_repetition": 0.8,
+      "hook_repetition": 0.6,
+      "@scenario_probability": 7.296000000000001,
+      "@scenario_score": 7.296000000000001
+    },
+    {
+      "reggae": 0.95,
+      "high_repetition": 0.6,
+      "@scenario_probability": 7.296000000000001,
+      "@scenario_score": 7.296000000000001
+    },
+    {
+      "reggae": 0.95,
+      "high_repetition": 0.8,
+      "catchy_chorus": 0.6,
+      "@scenario_probability": 7.296000000000001,
+      "@scenario_score": 7.296000000000001
+    }
+  ]
+}
+

@@ -1,0 +1,22 @@
+Title: rock-rnb
+
+Head Concept Name: rock
+Modifier Concept Name: rnb
+
+head, hook_repetition
+head, high_repetition
+
+modifier, high_repetition
+modifier, rnb
+
+T(modifier), rnb, 0.95
+T(modifier), high_repetition, 0.6
+
+T(head), rock, 0.95
+T(head), catchy_chorus, 0.6
+T(head), high_repetition, 0.6
+T(head), hook_repetition, 0.6
+
+
+Result: {"rnb": 0.95, "rock": 0.95, "hook_repetition": 0.6, "@scenario_probability": 3.4656000000000002, "@scenario_score": 3.4656000000000002}
+Scenario: [1, 0, 1, 0, 0, 1, 3.4656000000000002]

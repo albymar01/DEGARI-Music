@@ -1,0 +1,13 @@
+{
+  "head": "rnb",
+  "modifier": "metal",
+  "recommended_scenarios": [
+    {
+      "metal": 0.95,
+      "rnb": 0.95,
+      "high_repetition": 0.618,
+      "@scenario_probability": 3.5695680000000003,
+      "@scenario_score": 3.5695680000000003
+    }
+  ]
+}

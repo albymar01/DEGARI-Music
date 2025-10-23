@@ -1,0 +1,23 @@
+Title: metal-country
+
+Head Concept Name: metal
+Modifier Concept Name: country
+
+head, high_repetition
+head, metal
+
+modifier, country
+modifier, high_repetition
+
+T(modifier), country, 0.95
+T(modifier), high_repetition, 0.62
+T(modifier), hook_repetition, 0.6
+
+T(head), metal, 0.95
+T(head), high_repetition, 0.618
+T(head), catchy_chorus, 0.6
+T(head), hook_repetition, 0.6
+
+
+Result: {"country": 0.95, "metal": 0.95, "high_repetition": 0.62, "@scenario_probability": 1.3679878400000003, "@scenario_score": 1.3679878400000003}
+Scenario: [1, 1, 0, 1, 0, 0, 0, 1.3679878400000003]

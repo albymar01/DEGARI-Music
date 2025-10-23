@@ -1,0 +1,48 @@
+{
+  "head": "reggae",
+  "modifier": "rock",
+  "recommended_scenarios": [
+    {
+      "reggae": 0.95,
+      "rock": 0.95,
+      "hook_repetition": 0.6,
+      "@scenario_probability": 0.5544960000000001,
+      "@scenario_score": 0.5544960000000001
+    },
+    {
+      "reggae": 0.95,
+      "rock": 0.95,
+      "high_repetition": 0.6,
+      "@scenario_probability": 0.5544960000000001,
+      "@scenario_score": 0.5544960000000001
+    },
+    {
+      "reggae": 0.95,
+      "rock": 0.95,
+      "catchy_chorus": 0.6,
+      "@scenario_probability": 0.5544960000000001,
+      "@scenario_score": 0.5544960000000001
+    },
+    {
+      "reggae": 0.95,
+      "rock": 0.95,
+      "hook_repetition": 0.6,
+      "@scenario_probability": 0.5544960000000001,
+      "@scenario_score": 0.5544960000000001
+    },
+    {
+      "reggae": 0.95,
+      "rock": 0.95,
+      "high_repetition": 0.6,
+      "@scenario_probability": 0.5544960000000001,
+      "@scenario_score": 0.5544960000000001
+    },
+    {
+      "reggae": 0.95,
+      "rock": 0.95,
+      "catchy_chorus": 0.6,
+      "@scenario_probability": 0.5544960000000001,
+      "@scenario_score": 0.5544960000000001
+    }
+  ]
+}

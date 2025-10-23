@@ -1,0 +1,24 @@
+Title: pop-reggae
+
+Head Concept Name: pop
+Modifier Concept Name: reggae
+
+head, hook_repetition
+head, high_repetition
+
+modifier, hook_repetition
+modifier, high_repetition
+
+T(modifier), reggae, 0.95
+T(modifier), catchy_chorus, 0.6
+T(modifier), high_repetition, 0.6
+T(modifier), hook_repetition, 0.6
+
+T(head), pop, 0.95
+T(head), high_repetition, 0.629
+T(head), hook_repetition, 0.629
+T(head), catchy_chorus, 0.6
+
+
+Result: {"pop": 0.95, "reggae": 0.95, "hook_repetition": 0.629, "@scenario_probability": 0.5391526336000001, "@scenario_score": 0.5391526336000001}
+Scenario: [1, 0, 0, 0, 1, 0, 1, 0, 0.5391526336000001]

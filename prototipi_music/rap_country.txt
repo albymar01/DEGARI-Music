@@ -1,0 +1,16 @@
+Title: rap-country
+
+Head Concept Name: rap
+Modifier Concept Name: country
+
+head, high_repetition
+
+modifier, country
+modifier, high_repetition
+
+T(modifier), country, 0.95
+T(modifier), high_repetition, 0.62
+T(modifier), hook_repetition, 0.6
+
+T(head), high_repetition, 0.8
+

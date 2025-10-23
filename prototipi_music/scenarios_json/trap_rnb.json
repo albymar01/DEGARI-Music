@@ -1,0 +1,13 @@
+{
+  "head": "trap",
+  "modifier": "rnb",
+  "recommended_scenarios": [
+    {
+      "rnb": 0.95,
+      "trap": 0.95,
+      "high_repetition": 0.6,
+      "@scenario_probability": 21.66,
+      "@scenario_score": 21.66
+    }
+  ]
+}

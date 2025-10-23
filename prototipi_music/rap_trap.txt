@@ -1,0 +1,15 @@
+Title: rap-trap
+
+Head Concept Name: rap
+Modifier Concept Name: trap
+
+head, high_repetition
+
+modifier, high_repetition
+modifier, trap
+
+T(modifier), trap, 0.95
+T(modifier), high_repetition, 0.6
+
+T(head), high_repetition, 0.8
+

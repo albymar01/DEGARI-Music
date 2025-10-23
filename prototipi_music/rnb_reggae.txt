@@ -1,0 +1,22 @@
+Title: rnb-reggae
+
+Head Concept Name: rnb
+Modifier Concept Name: reggae
+
+head, high_repetition
+head, rnb
+
+modifier, hook_repetition
+modifier, high_repetition
+
+T(modifier), reggae, 0.95
+T(modifier), catchy_chorus, 0.6
+T(modifier), high_repetition, 0.6
+T(modifier), hook_repetition, 0.6
+
+T(head), rnb, 0.95
+T(head), high_repetition, 0.6
+
+
+Result: {"reggae": 0.95, "rnb": 0.95, "hook_repetition": 0.6, "@scenario_probability": 3.4656000000000002, "@scenario_score": 3.4656000000000002}
+Scenario: [1, 0, 0, 1, 1, 0, 3.4656000000000002]

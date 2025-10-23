@@ -1,0 +1,13 @@
+{
+  "head": "rock",
+  "modifier": "metal",
+  "recommended_scenarios": [
+    {
+      "metal": 0.95,
+      "rock": 0.95,
+      "high_repetition": 0.618,
+      "@scenario_probability": 0.5711308800000001,
+      "@scenario_score": 0.5711308800000001
+    }
+  ]
+}

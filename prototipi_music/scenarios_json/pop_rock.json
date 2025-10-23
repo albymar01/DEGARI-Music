@@ -1,0 +1,13 @@
+{
+  "head": "pop",
+  "modifier": "rock",
+  "recommended_scenarios": [
+    {
+      "pop": 0.95,
+      "rock": 0.95,
+      "hook_repetition": 0.629,
+      "@scenario_probability": 0.5391526336000001,
+      "@scenario_score": 0.5391526336000001
+    }
+  ]
+}

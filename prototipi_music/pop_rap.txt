@@ -1,0 +1,20 @@
+Title: pop-rap
+
+Head Concept Name: pop
+Modifier Concept Name: rap
+
+head, hook_repetition
+head, high_repetition
+
+modifier, high_repetition
+
+T(modifier), high_repetition, 0.8
+
+T(head), pop, 0.95
+T(head), high_repetition, 0.629
+T(head), hook_repetition, 0.629
+T(head), catchy_chorus, 0.6
+
+
+Result: {"pop": 0.95, "high_repetition": 0.8, "hook_repetition": 0.629, "@scenario_probability": 7.0941136, "@scenario_score": 7.0941136}
+Scenario: [1, 1, 0, 1, 0, 7.0941136]

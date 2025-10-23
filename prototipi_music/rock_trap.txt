@@ -1,0 +1,22 @@
+Title: rock-trap
+
+Head Concept Name: rock
+Modifier Concept Name: trap
+
+head, hook_repetition
+head, high_repetition
+
+modifier, high_repetition
+modifier, trap
+
+T(modifier), trap, 0.95
+T(modifier), high_repetition, 0.6
+
+T(head), rock, 0.95
+T(head), catchy_chorus, 0.6
+T(head), high_repetition, 0.6
+T(head), hook_repetition, 0.6
+
+
+Result: {"rock": 0.95, "trap": 0.95, "hook_repetition": 0.6, "@scenario_probability": 3.4656000000000002, "@scenario_score": 3.4656000000000002}
+Scenario: [1, 0, 1, 0, 0, 1, 3.4656000000000002]

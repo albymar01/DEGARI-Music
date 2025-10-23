@@ -1,0 +1,19 @@
+Title: country-rap
+
+Head Concept Name: country
+Modifier Concept Name: rap
+
+head, country
+head, high_repetition
+
+modifier, high_repetition
+
+T(modifier), high_repetition, 0.8
+
+T(head), country, 0.95
+T(head), high_repetition, 0.62
+T(head), hook_repetition, 0.6
+
+
+Result: {"country": 0.95, "high_repetition": 0.62, "@scenario_probability": 18.848, "@scenario_score": 18.848}
+Scenario: [1, 1, 1, 0, 18.848]

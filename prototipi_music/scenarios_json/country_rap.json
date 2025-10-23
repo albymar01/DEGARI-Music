@@ -1,0 +1,12 @@
+{
+  "head": "country",
+  "modifier": "rap",
+  "recommended_scenarios": [
+    {
+      "country": 0.95,
+      "high_repetition": 0.62,
+      "@scenario_probability": 18.848,
+      "@scenario_score": 18.848
+    }
+  ]
+}

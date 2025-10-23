@@ -1,0 +1,18 @@
+Title: rnb-rap
+
+Head Concept Name: rnb
+Modifier Concept Name: rap
+
+head, high_repetition
+head, rnb
+
+modifier, high_repetition
+
+T(modifier), high_repetition, 0.8
+
+T(head), rnb, 0.95
+T(head), high_repetition, 0.6
+
+
+Result: {"rnb": 0.95, "high_repetition": 0.8, "@scenario_probability": 30.400000000000002, "@scenario_score": 30.400000000000002}
+Scenario: [1, 1, 0, 30.400000000000002]

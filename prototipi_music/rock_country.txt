@@ -1,0 +1,23 @@
+Title: rock-country
+
+Head Concept Name: rock
+Modifier Concept Name: country
+
+head, hook_repetition
+head, high_repetition
+
+modifier, country
+modifier, high_repetition
+
+T(modifier), country, 0.95
+T(modifier), high_repetition, 0.62
+T(modifier), hook_repetition, 0.6
+
+T(head), rock, 0.95
+T(head), catchy_chorus, 0.6
+T(head), high_repetition, 0.6
+T(head), hook_repetition, 0.6
+
+
+Result: {"country": 0.95, "rock": 0.95, "high_repetition": 0.62, "@scenario_probability": 1.4324480000000004, "@scenario_score": 1.4324480000000004}
+Scenario: [1, 1, 0, 1, 0, 0, 0, 1.4324480000000004]

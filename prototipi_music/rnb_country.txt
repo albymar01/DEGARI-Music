@@ -1,0 +1,21 @@
+Title: rnb-country
+
+Head Concept Name: rnb
+Modifier Concept Name: country
+
+head, high_repetition
+head, rnb
+
+modifier, country
+modifier, high_repetition
+
+T(modifier), country, 0.95
+T(modifier), high_repetition, 0.62
+T(modifier), hook_repetition, 0.6
+
+T(head), rnb, 0.95
+T(head), high_repetition, 0.6
+
+
+Result: {"country": 0.95, "rnb": 0.95, "high_repetition": 0.62, "@scenario_probability": 8.952800000000002, "@scenario_score": 8.952800000000002}
+Scenario: [1, 1, 0, 1, 0, 8.952800000000002]

@@ -1,0 +1,13 @@
+{
+  "head": "country",
+  "modifier": "reggae",
+  "recommended_scenarios": [
+    {
+      "country": 0.95,
+      "reggae": 0.95,
+      "high_repetition": 0.62,
+      "@scenario_probability": 1.4324480000000002,
+      "@scenario_score": 1.4324480000000002
+    }
+  ]
+}

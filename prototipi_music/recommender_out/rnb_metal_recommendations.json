@@ -1,0 +1,569 @@
+{
+  "category": "rnb_metal.txt",
+  "prototype": [
+    "high_repetition",
+    "rnb",
+    "metal"
+  ],
+  "anchors": [
+    "high_repetition",
+    "rnb",
+    "metal"
+  ],
+  "results": [
+    {
+      "id": "rap_eminem_rap-god_2013_235729",
+      "title": "Rap God",
+      "artist": "Eminem",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "rap_eminem_lose-yourself_2002_207",
+      "title": "Lose Yourself",
+      "artist": "Eminem",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "rap_eminem_mockingbird_2004_1797",
+      "title": "Mockingbird",
+      "artist": "Eminem",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "rap_kendrick-l_not-like-us_2024_10359264",
+      "title": "Not Like Us",
+      "artist": "Kendrick Lamar",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "rap_kendrick-l_humble_2017_3039923",
+      "title": "HUMBLE.",
+      "artist": "Kendrick Lamar",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "rap_kendrick-l_euphoria_2024_10341021",
+      "title": "euphoria",
+      "artist": "Kendrick Lamar",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "trap_travis-sco_sicko-mode_2018_3876994",
+      "title": "SICKO MODE",
+      "artist": "Travis Scott",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "trap_travis-sco_goosebumps_2016_2849767",
+      "title": "goosebumps",
+      "artist": "Travis Scott",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "trap_travis-sco_butterfly-effect_2017_3089187",
+      "title": "BUTTERFLY EFFECT",
+      "artist": "Travis Scott",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "trap_future_mask-off_2017_2989266",
+      "title": "Mask Off",
+      "artist": "Future",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "trap_future_like-that_2024_10125497",
+      "title": "Like That",
+      "artist": "Future",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "trap_future_low-life_2015_2396302",
+      "title": "Low Life",
+      "artist": "Future",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "metal_metallica_one_1988_86916",
+      "title": "One",
+      "artist": "Metallica",
+      "matches": [
+        "high_repetition",
+        "metal"
+      ],
+      "anchors_hit": [
+        "high_repetition",
+        "metal"
+      ]
+    },
+    {
+      "id": "metal_metallica_nothing-else-mat_1991_108832",
+      "title": "Nothing Else Matters",
+      "artist": "Metallica",
+      "matches": [
+        "high_repetition",
+        "metal"
+      ],
+      "anchors_hit": [
+        "high_repetition",
+        "metal"
+      ]
+    },
+    {
+      "id": "metal_metallica_enter-sandman_1991_118766",
+      "title": "Enter Sandman",
+      "artist": "Metallica",
+      "matches": [
+        "high_repetition",
+        "metal"
+      ],
+      "anchors_hit": [
+        "high_repetition",
+        "metal"
+      ]
+    },
+    {
+      "id": "metal_judas-prie_painkiller_1990_388644",
+      "title": "Painkiller",
+      "artist": "Judas Priest",
+      "matches": [
+        "high_repetition",
+        "metal"
+      ],
+      "anchors_hit": [
+        "high_repetition",
+        "metal"
+      ]
+    },
+    {
+      "id": "metal_judas-prie_youve-got-anothe_1982_151447",
+      "title": "You’ve Got Another Thing Comin’",
+      "artist": "Judas Priest",
+      "matches": [
+        "high_repetition",
+        "metal"
+      ],
+      "anchors_hit": [
+        "high_repetition",
+        "metal"
+      ]
+    },
+    {
+      "id": "metal_judas-prie_breaking-the-law_1980_73842",
+      "title": "Breaking the Law",
+      "artist": "Judas Priest",
+      "matches": [
+        "high_repetition",
+        "metal"
+      ],
+      "anchors_hit": [
+        "high_repetition",
+        "metal"
+      ]
+    },
+    {
+      "id": "rock_nirvana_smells-like-teen_1991_52968",
+      "title": "Smells Like Teen Spirit",
+      "artist": "Nirvana",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "rock_nirvana_come-as-you-are_1991_62560",
+      "title": "Come as You Are",
+      "artist": "Nirvana",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "rock_nirvana_heart-shaped-box_1993_62555",
+      "title": "Heart-Shaped Box",
+      "artist": "Nirvana",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "rock_ac-dc_t-n-t_1975_132510",
+      "title": "T.N.T.",
+      "artist": "AC/DC",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "rock_ac-dc_back-in-black_1980_73849",
+      "title": "Back in Black",
+      "artist": "AC/DC",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "rock_ac-dc_highway-to-hell_1979_82653",
+      "title": "Highway to Hell",
+      "artist": "AC/DC",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "pop_the-weeknd_the-hills_2015_727466",
+      "title": "The Hills",
+      "artist": "The Weeknd",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "pop_the-weeknd_starboy_2016_2851948",
+      "title": "Starboy",
+      "artist": "The Weeknd",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "pop_the-weeknd_die-for-you_2016_2911557",
+      "title": "Die For You",
+      "artist": "The Weeknd",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "pop_lady-gaga_shallow_2018_3352793",
+      "title": "Shallow",
+      "artist": "Lady Gaga",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "pop_lady-gaga_die-with-a-smile_2024_10766684",
+      "title": "Die With A Smile",
+      "artist": "Lady Gaga",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "pop_lady-gaga_poker-face_2008_1316",
+      "title": "Poker Face",
+      "artist": "Lady Gaga",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "reggae_bob-marley_one-love_1965_1372677",
+      "title": "One Love",
+      "artist": "Bob Marley",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "reggae_bob-marley_judge-not_1962_810072",
+      "title": "Judge Not!",
+      "artist": "Bob Marley",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "reggae_bob-marley_one-cup-of-coffe_1963_1176008",
+      "title": "One Cup Of Coffee",
+      "artist": "Bob Marley",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "reggae_inner-circ_bad-boys_1987_97782",
+      "title": "Bad Boys",
+      "artist": "Inner Circle",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "reggae_inner-circ_sweat-a-la-la-la_1993_1007720",
+      "title": "Sweat (A La La La La Long)",
+      "artist": "Inner Circle",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "reggae_inner-circ_games-people-pla_1994_1023141",
+      "title": "Games People Play",
+      "artist": "Inner Circle",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "rnb_beyonce_drunk-in-love_2013_299177",
+      "title": "Drunk in Love",
+      "artist": "Beyoncé",
+      "matches": [
+        "high_repetition",
+        "rnb"
+      ],
+      "anchors_hit": [
+        "high_repetition",
+        "rnb"
+      ]
+    },
+    {
+      "id": "rnb_beyonce_formation_2016_2419257",
+      "title": "Formation",
+      "artist": "Beyoncé",
+      "matches": [
+        "high_repetition",
+        "rnb"
+      ],
+      "anchors_hit": [
+        "high_repetition",
+        "rnb"
+      ]
+    },
+    {
+      "id": "rnb_beyonce_halo_2008_52158",
+      "title": "Halo",
+      "artist": "Beyoncé",
+      "matches": [
+        "high_repetition",
+        "rnb"
+      ],
+      "anchors_hit": [
+        "high_repetition",
+        "rnb"
+      ]
+    },
+    {
+      "id": "rnb_tlc_no-scrubs-with-r_1999_2365",
+      "title": "No Scrubs (With Rap)",
+      "artist": "TLC",
+      "matches": [
+        "high_repetition",
+        "rnb"
+      ],
+      "anchors_hit": [
+        "high_repetition",
+        "rnb"
+      ]
+    },
+    {
+      "id": "rnb_tlc_waterfalls_1994_1942",
+      "title": "Waterfalls",
+      "artist": "TLC",
+      "matches": [
+        "high_repetition",
+        "rnb"
+      ],
+      "anchors_hit": [
+        "high_repetition",
+        "rnb"
+      ]
+    },
+    {
+      "id": "rnb_tlc_creep_1994_45596",
+      "title": "Creep",
+      "artist": "TLC",
+      "matches": [
+        "high_repetition",
+        "rnb"
+      ],
+      "anchors_hit": [
+        "high_repetition",
+        "rnb"
+      ]
+    },
+    {
+      "id": "country_john-denve_take-me-home-cou_1971_138406",
+      "title": "Take Me Home, Country Roads",
+      "artist": "John Denver",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "country_john-denve_annies-song_637698",
+      "title": "Annie’s Song",
+      "artist": "John Denver",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "country_john-denve_leaving-on-a-jet_1555833",
+      "title": "Leaving on a Jet Plane",
+      "artist": "John Denver",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "country_dolly-part_jolene_1973_207947",
+      "title": "Jolene",
+      "artist": "Dolly Parton",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "country_dolly-part_9-to-5_1980_76064",
+      "title": "9 to 5",
+      "artist": "Dolly Parton",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    },
+    {
+      "id": "country_dolly-part_coat-of-many-col_1971_81674",
+      "title": "Coat of Many Colors",
+      "artist": "Dolly Parton",
+      "matches": [
+        "high_repetition"
+      ],
+      "anchors_hit": [
+        "high_repetition"
+      ]
+    }
+  ],
+  "classified": 48,
+  "total": 48
+}
